@@ -110,7 +110,6 @@
 		{
 			"matches": ["https://www.torn.com/casino.php*"],
 			"css": ["scripts/content/casino/ttCasino.css"],
-			"js": ["scripts/content/casino/ttCasino.js"],
 			"run_at": "document_end"
 		},
 		{

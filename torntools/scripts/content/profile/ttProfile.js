@@ -202,19 +202,13 @@ requireDatabase().then(() => {
 		console.log("TT - Profile");
 
 		userId = getUserId();
+		// noinspection JSUnresolvedVariable
 		let user_faction = userdata.faction.faction_name;
-
-		if (settings.pages.profile.show_id) {
-			showId();
-		}
 
 		if (settings.pages.profile.loot_times) {
 			displayLootLevel(loot_times);
 		}
 
-		if (settings.pages.profile.status_indicator) {
-			addStatusIndicator();
-		}
 		displayCreator();
 
 		// Age to Words
@@ -222,21 +216,18 @@ requireDatabase().then(() => {
 
 		if (shouldDisable()) return;
 
-		// noinspection EqualityComparisonWithCoercionJS
+		// noinspection EqualityComparisonWithCoercionJS,JSUnresolvedVariable
 		if (userId == userdata.player_id) return;
 
 		if (settings.pages.profile.friendly_warning) {
 			displayAlly(user_faction, allies);
 		}
 
-		// Profile notes
-		if (settings.pages.profile.notes) showProfileNotes();
-
 		if (Object.keys(users_alias).length) showAlias();
 
 		// Profile stats
 		let info_container = content.newContainer("User Info", { next_element_heading: "Medals", id: "tt-target-info" });
-		if (npcIds.includes(parseInt(userId))) doc.find(".profile-wrapper.m-top10:not(.medals-wrapper)").insertAdjacentElement("beforeBegin", info_container);
+		if (npcIds.includes(parseInt(userId))) doc.find(".profile-wrapper.m-top10:not(.medals-wrapper)").insertAdjacentElement("beforebegin", info_container);
 
 		let section_profile_stats = doc.new({ type: "div", class: "tt-section", attributes: { name: "profile-stats" } });
 		let profile_stats_div = doc.new({ type: "div", class: `profile-stats ${mobile ? "tt-mobile" : ""}` });
@@ -804,6 +795,7 @@ async function showSpyInfo() {
 	} else if (!result.spyreport.status) {
 		spySection.appendChild(doc.new({ type: "div", class: "tt-spy-info", text: result.spyreport.message }));
 	} else {
+		// noinspection JSUnresolvedVariable
 		let heading = doc.new({
 			type: "div",
 			class: "spy-heading",
@@ -855,11 +847,13 @@ async function showSpyInfo() {
 
 		let score_row = doc.new({ type: "div", class: "tt-row" });
 		let score_item_key = doc.new({ type: "div", class: "item", text: "Score" });
+		// noinspection JSUnresolvedVariable
 		let score_item_them = doc.new({
 			type: "div",
 			class: "item",
 			text: numberWithCommas(parseInt(result.spyreport.target_score), false),
 		});
+		// noinspection JSUnresolvedVariable
 		let score_item_you = doc.new({
 			type: "div",
 			class: "item",
@@ -870,12 +864,16 @@ async function showSpyInfo() {
 			},
 		});
 
+		// noinspection JSUnresolvedVariable
 		if (parseInt(result.spyreport.target_score) > parseInt(result.spyreport.your_score)) {
 			score_item_you.classList.add("negative");
 			score_item_them.classList.add("positive");
-		} else if (parseInt(result.spyreport.target_score) < parseInt(result.spyreport.your_score)) {
-			score_item_them.classList.add("negative");
-			score_item_you.classList.add("positive");
+		} else {
+			// noinspection JSUnresolvedVariable
+			if (parseInt(result.spyreport.target_score) < parseInt(result.spyreport.your_score)) {
+				score_item_them.classList.add("negative");
+				score_item_you.classList.add("positive");
+			}
 		}
 
 		score_row.appendChild(score_item_key);
@@ -903,6 +901,7 @@ function getRespect(target_list, id) {
 	let color;
 
 	for (let list in target_list[id]["respect_base"]) {
+		// noinspection JSUnfilteredForInLoop
 		if (target_list[id]["respect_base"][list].length > 0) {
 			respect_type = "respect_base";
 			break;
@@ -916,6 +915,7 @@ function getRespect(target_list, id) {
 		let averages = [];
 
 		for (let list in target_list[id][respect_type]) {
+			// noinspection JSUnfilteredForInLoop
 			let average = getAverage(target_list[id][respect_type][list]);
 
 			if (average !== 0) averages.push(average);
@@ -941,18 +941,12 @@ function getAverage(arr) {
 	return parseFloat((sum / arr.length).toFixed(2));
 }
 
-function showId() {
-	doc.find("#skip-to-content").innerText = doc.find(".profile-container .info-table > li .user-info-value").innerText;
-}
-
 function displayLootLevel(loot_times) {
 	console.log(loot_times);
 	let profile_id = getUserId();
 
 	if (profile_id in loot_times) {
-		let npcID = profile_id;
-		let npcData = loot_times[npcID];
-		let npcStatus;
+		let npcData = loot_times[profile_id];
 		let npcInHosp = false;
 		if (npcData.hospout * 1000 > Date.now()) npcInHosp = true;
 		let npcNextLevelIn, maxLevel;
@@ -978,15 +972,16 @@ function displayLootLevel(loot_times) {
 						},
 					});
 					break;
-				} else if (lootLevel !== 5 && nextLvlTime < 0) {
-					continue;
-				} else if (lootLevel === 5 && nextLvlTime < 0) {
-					maxLevel = true;
-					npcNextLevelIn = doc.new({
-						type: "span",
-						class: "tt-loot-time",
-						text: "Next level in: Max Level Reached",
-					});
+				} else {
+					// noinspection JSIncompatibleTypesComparison
+					if (lootLevel === 5 && nextLvlTime < 0) {
+						maxLevel = true;
+						npcNextLevelIn = doc.new({
+							type: "span",
+							class: "tt-loot-time",
+							text: "Next level in: Max Level Reached",
+						});
+					}
 				}
 			}
 		}
@@ -1004,39 +999,6 @@ function displayLootLevel(loot_times) {
 			}, 1000);
 		}
 	}
-}
-
-function addStatusIndicator() {
-	let status_icon = doc.find(".icons ul>li");
-	let icon_span = doc.new({
-		type: "div",
-		class: status_icon.classList[0],
-		attributes: {
-			style: `margin-right: 3px; float: left; background-position: ${window.getComputedStyle(status_icon).getPropertyValue("background-position")};`,
-		},
-	});
-	if (!mobile) icon_span.style.marginTop = "1px";
-	let text_span = doc.new({
-		type: "span",
-		class: "tt-profile-title",
-		text: doc.find("#skip-to-content").innerText,
-	});
-
-	doc.find("#skip-to-content").innerText = "";
-	doc.find("#skip-to-content").appendChild(icon_span);
-	doc.find("#skip-to-content").appendChild(text_span);
-
-	// Event listener
-	let status_observer = new MutationObserver((mutationsList) => {
-		for (let mutation of mutationsList) {
-			if (mutation.type === "childList") {
-				console.log(doc.find(".icons ul>li"));
-				icon_span.setAttribute("class", doc.find(".icons ul>li").classList[0]);
-				icon_span.style.backgroundPosition = window.getComputedStyle(doc.find(".icons ul>li")).getPropertyValue("background-position");
-			}
-		}
-	});
-	status_observer.observe(status_icon.parentElement, { childList: true });
 }
 
 function displayStakeoutOptions() {
@@ -1148,37 +1110,19 @@ function displayStakeoutOptions() {
 	}
 }
 
-function getUsername() {
-	return doc.find(".basic-information ul.info-table li:nth-of-type(1) div:nth-of-type(2)").innerText.split(" [")[0].trim();
-}
-
-function getStatus() {
-	let desc = doc.find(".main-desc").innerText;
-
-	if (desc.indexOf("Okay") > -1) {
-		return "okay";
-	} else if (desc.indexOf("hospital") > -1) {
-		return "hospital";
-	} else if (desc.indexOf("jail") > -1) {
-		return "jail";
-	}
-}
-
-function getTraveling() {
-	let desc = doc.find(".main-desc").innerText;
-
-	return desc.indexOf("Traveling") > -1 || desc.indexOf("Returning") > -1;
-}
-
 function handleTornStatsData(data) {
 	let response = {};
 
+	// noinspection JSUnresolvedVariable
 	if (data.spy.status) {
+		// noinspection JSUnresolvedVariable
 		response.spyreport = { ...data.spy };
 	} else {
+		// noinspection JSUnresolvedVariable
 		if (data.spy.message.includes("User not found")) {
 			response.error = "Can't display stat spies because no TornStats account was found. Please register an account @ www.tornstats.com";
 		} else {
+			// noinspection JSUnresolvedVariable
 			response.error = data.spy.message;
 		}
 	}
@@ -1198,69 +1142,6 @@ function saveProfileStats() {
 	ttStorage.change({ filters: { profile_stats: { chosen_stats: chosen_keys } } });
 }
 
-function showProfileNotes() {
-	let userId = getUserId();
-	const textbox = doc.new({ type: "textarea", class: "tt-profile-notes-textarea", attributes: { maxLength: 1024 } });
-
-	const profile = profile_notes.profiles[userId];
-	textbox.style.height = profile ? profile.height : "17px";
-	textbox.value = profile ? profile.notes : "";
-
-	const containerBox = content.newContainer("Profile Notes", {
-		next_element_heading: "Medals",
-		id: "tt-target-notes",
-		collapseId: 1,
-	});
-	if (npcIds.includes(parseInt(userId))) doc.find(".profile-wrapper.m-top10:not(.medals-wrapper)").insertAdjacentElement("beforeBegin", containerBox);
-	const container = containerBox.find(".content");
-	container.appendChild(
-		doc.new({
-			type: "div",
-			class: "tt-section",
-			attributes: { name: "profile-notes" },
-			children: [textbox],
-		})
-	);
-
-	let save_button = doc.new({
-		type: "div",
-		id: "tt-profile-notes-save",
-		class: "tt-option",
-		children: [doc.new({ type: "i", class: "fas fa-save" }), doc.new({ type: "span", class: "text", text: "Save" })],
-	});
-	doc.find("#tt-target-notes .tt-options").appendChild(save_button);
-
-	save_button.onclick = (event) => {
-		event.stopPropagation();
-
-		ttStorage.change(
-			{
-				profile_notes: {
-					profiles: {
-						[userId]: {
-							height: textbox.style.height,
-							notes: textbox.value,
-						},
-					},
-				},
-			},
-			() => {
-				console.log("Saved profile notes", {
-					height: textbox.style.height,
-					notes: textbox.value,
-				});
-
-				if (!doc.find("#tt-target-notes .saved-note")) {
-					const note = doc.new({ type: "span", class: "saved-note", text: "Saved note." });
-
-					doc.find("#tt-target-notes .tt-title").insertBefore(note, doc.find("#tt-target-notes .tt-title .tt-options"));
-					setTimeout(() => note.remove(), 2500);
-				}
-			}
-		);
-	};
-}
-
 function ageToWords() {
 	document.findAll(".box-name.t-gray-9.bold")[2].remove();
 	let newAge = doc.new({ type: "div", class: "box-name t-gray-9 bold" });
@@ -1268,8 +1149,11 @@ function ageToWords() {
 	let dateCurrent = new Date();
 	let utimeTarget = dateCurrent.getTime() + age * 86400 * 1000;
 	let dateTarget = new Date(utimeTarget);
+	// noinspection JSCheckFunctionSignatures
 	let diffYear = parseInt(dateTarget.getUTCFullYear() - dateCurrent.getUTCFullYear());
+	// noinspection JSCheckFunctionSignatures
 	let diffMonth = parseInt(dateTarget.getUTCMonth() - dateCurrent.getUTCMonth());
+	// noinspection JSCheckFunctionSignatures
 	let diffDay = parseInt(dateTarget.getUTCDate() - dateCurrent.getUTCDate());
 	let daysInMonth = [31, dateTarget.getUTCFullYear() % 4 ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 	let dateString = "";
@@ -1293,8 +1177,8 @@ function ageToWords() {
 		break;
 	}
 	newAge.innerText = dateString;
-	document.find(".box-info.age").find(".block-value").insertAdjacentElement("afterEnd", newAge);
-	newAge.insertAdjacentHTML("beforeBegin", "<br>");
+	document.find(".box-info.age").find(".block-value").insertAdjacentElement("afterend", newAge);
+	newAge.insertAdjacentHTML("beforebegin", "<br>");
 }
 
 function disableAllyAttack() {
@@ -1303,7 +1187,7 @@ function disableAllyAttack() {
 		let crossSvg =
 			'<svg xmlns="http://www.w3.org/2000/svg" class="default___25YWq" filter="" fill="rgba(217, 54, 0, 0.5)" stroke="#d4d4d4" stroke-width="0" width="46" height="46" viewBox="551.393 356 44 44"><path d="M556.393,363l12.061,14-12.061,14,1,1,14-11.94,14,11.94,1-1-12.06-14,12.06-14-1-1-14,11.94-14-11.94Z"></path></svg>';
 		let attackButton = doc.find("a.profile-button-attack");
-		attackButton.children[0].insertAdjacentHTML("afterEnd", crossSvg);
+		attackButton.children[0].insertAdjacentHTML("afterend", crossSvg);
 		attackButton.style.pointerEvents = "none";
 		doc.find("a.profile-button-attack").children[0].style.fill = "rgba(153, 153, 153, 0.4)";
 		attackButton.classList.remove("active");
@@ -1327,6 +1211,6 @@ function showAlias() {
 		let clone = doc.findAll(".basic-info ul.info-table > *")[2].cloneNode(true);
 		clone.find(".user-information-section .bold").innerText = "Alias";
 		clone.find(".user-info-value span").innerText = users_alias[getUserId()];
-		doc.find(".basic-info ul.info-table > *").insertAdjacentElement("afterEnd", clone);
+		doc.find(".basic-info ul.info-table > *").insertAdjacentElement("afterend", clone);
 	}
 }

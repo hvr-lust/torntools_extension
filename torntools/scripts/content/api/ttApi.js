@@ -36,10 +36,6 @@ requireDatabase(false).then(() => {
 		});
 	}
 	requireCondition(() => doc.find("#demo").style.display !== "none", { delay: 100 }).then(() => {
-		if (settings.pages.api.key) {
-			doc.find("#api_key").value = api_key;
-			doc.find("#api_key").focus();
-		}
 		if (settings.pages.api.marking) {
 			// Show fields in use
 			for (let panel of doc.findAll(".panel-group")) {

@@ -4,20 +4,6 @@ requireDatabase().then(() => {
 	// Add TT Black overlay
 	doc.find("body").appendChild(doc.new({ type: "div", class: "tt-black-overlay" }));
 
-	if (settings.pages.global.miniprofile_last_action) {
-		addFetchListener((event) => {
-			if (!event.detail) return;
-			const { page, json, fetch } = event.detail;
-
-			const params = new URL(fetch.url).searchParams;
-			const step = params.get("step");
-
-			if (page === "profiles" && step === "getUserNameContextMenu") {
-				showMiniprofileInformation(json);
-			}
-		});
-	}
-
 	if (settings.scripts.no_confirm.revives) {
 		injectXHR();
 
@@ -34,10 +20,6 @@ requireDatabase().then(() => {
 
 	aliasUsers();
 
-	const year = new Date().getUTCFullYear();
-	const now = Date.now();
-	if (Date.UTC(year, 3, 5, 12) <= now && Date.UTC(year, 3, 25, 12) >= now) easterEggs();
-
 	requireNavbar().then(async () => {
 		let _flying = await isFlying();
 
@@ -47,67 +29,9 @@ requireDatabase().then(() => {
 		// Create a section in Information tab for future info added
 		if (!mobile) addInformationSection();
 
-		// Make Areas collapsible
-		if (!doc.find("[class='header-arrow']") && !mobile) {
-			let areas_i = doc.new({ type: "i", class: "tt-title-icon-torn fas fa-caret-down" });
-			let areas_header = doc.find("h2=Areas");
-			areas_header.classList.add("tt-title-torn");
-			areas_header.appendChild(areas_i);
-			if (settings.pages.global.collapse_areas) areas_header.classList.add("collapsed");
-
-			areas_header.addEventListener("click", () => {
-				areas_header.classList.toggle("collapsed");
-				let collapsed = areas_header.classList.contains("collapsed");
-
-				ttStorage.change({ settings: { pages: { global: { collapse_areas: collapsed } } } });
-			});
-		}
-
-		// Update notification
-		if (updated && settings.update_notification && !mobile) {
-			addUpdateNotification();
-		}
-
-		// Custom links
-		if (custom_links.length > 0) {
-			addCustomLinks();
-		}
-
-		// Notes
-		if (settings.pages.global.notes && !mobile) {
-			addNotesBox();
-		}
-
-		// Remove icons that are hidden
-		function hideIcons(observer) {
-			observer.disconnect();
-
-			for (let icon of doc.findAll("#sidebarroot [class*='status-icons_'] > li")) {
-				let name = icon.getAttribute("class").split("_")[0];
-				if (hide_icons.includes(name)) {
-					icon.parentElement.appendChild(icon);
-				}
-			}
-
-			observer.observe(doc.find("#sidebarroot [class*='status-icons_']"), { childList: true });
-		}
-
-		hideIcons(new MutationObserver((_, observer) => hideIcons(observer)));
-
 		// Vault balance
 		if (settings.pages.global.vault_balance && !mobile) {
 			displayVaultBalance();
-		}
-
-		// OC ready time
-		if (settings.pages.global.oc_time && !mobile) {
-			displayOCtime();
-		}
-
-		// Content margin
-		if (mobile && !_flying && custom_links.length > 0) {
-			console.log("here");
-			doc.find("div[role='main']").classList.add("tt-modified");
 		}
 
 		// Links for Energy and Nerve
@@ -121,8 +45,6 @@ requireDatabase().then(() => {
 				window.location.href = "https://www.torn.com/crimes.php";
 			};
 		}
-
-		highlightRefills();
 
 		// NUKE REVIVE SCRIPT
 		if (settings.pages.global.enable_central_revive) nukeReviveScript();
@@ -158,8 +80,6 @@ requireDatabase().then(() => {
 		if (userdata.faction.faction_id && settings.pages.global.highlight_chain_timer && settings.pages.global.highlight_chain_length >= 10)
 			chainTimerHighlight();
 
-		hideGymHighlight();
-
 		if (settings.pages.profile.show_chain_warning) {
 			let miniProfilesObserver = new MutationObserver(chainBonusWatch);
 			miniProfilesObserver.observe(doc.body, { childList: true });
@@ -177,22 +97,14 @@ requireDatabase().then(() => {
 		if (shouldDisable()) return;
 
 		// Chat highlight
-		let highlights = { ...chat_highlight };
-		for (let key in highlights) {
-			if (!(key in HIGHLIGHT_PLACEHOLDERS)) continue;
-
-			highlights[HIGHLIGHT_PLACEHOLDERS[key].value()] = highlights[key];
-		}
+		let highlights = {};
 
 		if (doc.find(".chat-box-content_2C5UJ .overview_1MoPG .message_oP8oM")) {
 			manipulateChat(highlights);
 
 			if (settings.pages.global.find_chat) {
-				addChatFilters();
 				addPeopleBoxFilter();
 			}
-			if (settings.pages.global.trade_chat_timer) tradeChatPostTimer();
-			if (settings.pages.global.autocomplete_chat) addChatUsernameAutocomplete();
 			if (Object.keys(users_alias).length) aliasUsersChat();
 		}
 
@@ -203,11 +115,8 @@ requireDatabase().then(() => {
 
 			manipulateChat(highlights);
 			if (settings.pages.global.find_chat) {
-				addChatFilters();
 				addPeopleBoxFilter();
 			}
-			if (settings.pages.global.trade_chat_timer) tradeChatPostTimer();
-			if (settings.pages.global.autocomplete_chat) addChatUsernameAutocomplete();
 			if (Object.keys(users_alias).length) aliasUsersChat();
 		});
 
@@ -216,8 +125,6 @@ requireDatabase().then(() => {
 				if (mutation.addedNodes[0] && mutation.addedNodes[0].classList && mutation.addedNodes[0].classList.contains("message_oP8oM")) {
 					let message = mutation.addedNodes[0];
 
-					applyChatHighlights(message, highlights);
-					if (settings.pages.global.block_zalgo) removeZalgoText(message);
 					if (Object.keys(users_alias).length) aliasUsersChat(message);
 				}
 			}
@@ -228,259 +135,6 @@ requireDatabase().then(() => {
 
 function chatsLoaded() {
 	return requireElement(".overview_1MoPG");
-}
-
-function addCustomLinks() {
-	if (mobile) {
-		let areas_custom = doc.new({
-			type: "div",
-			class: "areas___2pu_3 areasWrapper areas-mobile___3zY0z torntools-mobile", // FIXME - Use right classes.
-		});
-		let div = doc.new({ type: "div" });
-		let swipe_container = doc.new({ type: "div", class: "swiper-container swiper-container-horizontal" });
-		let swipe_wrapper = doc.new({
-			type: "div",
-			class: "swiper-wrapper swiper___nAyWO", // FIXME - Use right classes.
-			attributes: { style: "transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;" },
-		});
-		let swipe_button_left = doc.new({
-			type: "div",
-			class: "swiper-button___3lZ1n button-prev___2x-Io swiper-button-disabled", // FIXME - Use right classes.
-		});
-		let swipe_button_right = doc.new({ type: "div", class: "swiper-button___3lZ1n button-next___1hJxo" });
-		// FIXME - Use right classes.
-
-		for (let link of custom_links) {
-			let slide = doc.new({ type: "div", class: "swiper-slide slide___1oBWA" }); // FIXME - Use right classes.
-			let area = doc.new({ type: "div", class: "area-mobile___1XJcq" }); // FIXME - Use right classes.
-			let area_row = doc.new({ type: "div", class: "area-row___1VM_l torntools-mobile" }); // FIXME - Use right classes.
-			let a = doc.new({
-				type: "a",
-				href: link.href,
-				class: "mobileLink___33zU1 sidebarMobileLink torntools-mobile", // FIXME - Use right classes.
-				text: link.text,
-				attributes: { target: link.new_tab ? "_blank" : "" },
-			});
-
-			area_row.appendChild(a);
-			area.appendChild(area_row);
-			slide.appendChild(area);
-			swipe_wrapper.appendChild(slide);
-		}
-
-		swipe_container.appendChild(swipe_wrapper);
-		swipe_container.appendChild(swipe_button_left);
-		swipe_container.appendChild(swipe_button_right);
-		div.appendChild(swipe_container);
-		areas_custom.appendChild(div);
-
-		doc.find("#sidebar [class*='content_']").insertBefore(areas_custom, doc.find("#sidebar [class*='content_'] [class*='user-information-mobile_']"));
-	} else {
-		let custom_links_section = navbar.newSection("Custom Links", { next_element_heading: "Areas" });
-
-		for (let link of custom_links) {
-			navbar.newCell(link.text, {
-				parent_element: custom_links_section,
-				href: link.href,
-				link_target: link.new_tab ? "_blank" : "",
-			});
-		}
-
-		doc.find("#sidebar").insertBefore(custom_links_section, findParent(doc.find("h2=Areas"), { class: "^=sidebar-block_" }));
-	}
-}
-
-function addNotesBox() {
-	let notes_section = navbar.newSection("Notes", { next_element_heading: "Areas" });
-	let cell = doc.new({ type: "div", class: "area-desktop___2N3Jp" }); // FIXME - Use right classes.
-	let inner_div = doc.new({ type: "div", class: "area-row___1VM_l" }); // FIXME - Use right classes.
-	let textbox = doc.new({ type: "textarea", class: "tt-nav-textarea", value: notes.text || "" });
-	// [class*='
-	if (notes.height) {
-		textbox.style.height = notes.height;
-	}
-
-	inner_div.appendChild(textbox);
-	cell.appendChild(inner_div);
-	notes_section.find(".tt-content").appendChild(cell);
-
-	doc.find("#sidebar").insertBefore(notes_section, findParent(doc.find("h2=Areas"), { class: "^=sidebar-block_" }));
-
-	textbox.addEventListener("change", () => {
-		ttStorage.set({ notes: { text: textbox.value, height: textbox.style.height } });
-	});
-	textbox.addEventListener("mouseup", () => {
-		if (textbox.style.height !== notes.height) {
-			console.log("resize");
-			console.log(textbox.style.height);
-			ttStorage.set({ notes: { text: textbox.value, height: textbox.style.height } });
-		}
-	});
-}
-
-function addUpdateNotification() {
-	let version_text = `TornTools updated: ${chrome.runtime.getManifest().version}`;
-	let settings_page_url = chrome.runtime.getURL("/views/settings/settings.html");
-
-	let cell = doc.new({ type: "div", class: "area-desktop___2N3Jp" }); // FIXME - Use right classes.
-	let inner_div = doc.new({ type: "div", class: "area-row___1VM_l" }); // FIXME - Use right classes.
-	let a = doc.new({
-		type: "a",
-		class: "desktopLink___1p2Dr", // FIXME - Use right classes.
-		href: settings_page_url,
-		attributes: { target: "_blank", style: "background-color: #B8E28F; min-height: 24px; line-height: 24px; color: #333;" },
-	});
-	let span = doc.new({ type: "span", text: version_text });
-
-	a.appendChild(span);
-	inner_div.appendChild(a);
-	cell.appendChild(inner_div);
-
-	doc.find("h2=Areas").nextElementSibling.insertBefore(cell, doc.find("h2=Areas").nextElementSibling.firstElementChild);
-}
-
-function manipulateChat(highlights) {
-	if (highlights || settings.pages.global.block_zalgo) {
-		for (let chat of doc.findAll(".chat-box-content_2C5UJ .overview_1MoPG")) {
-			for (let message of chat.findAll(".message_oP8oM")) {
-				if (highlights) applyChatHighlights(message, highlights);
-
-				if (settings.pages.global.block_zalgo) removeZalgoText(message);
-			}
-		}
-	}
-}
-
-function applyChatHighlights(message, highlights) {
-	let sender = message.find("a").innerText.replace(":", "").trim();
-	let text = simplify(message.find("span").innerText);
-	const words = text.split(" ").map(simplify);
-
-	if (sender in highlights) {
-		message.find("a").style.color = highlights[sender];
-	}
-
-	for (let highlight in highlights) {
-		if (!words.includes(highlight.toLowerCase())) continue;
-
-		let color = highlights[highlight];
-		if (color.length === 7) color += "6e";
-
-		message.find("span").parentElement.style.backgroundColor = color;
-		break;
-	}
-
-	function simplify(text) {
-		return text.toLowerCase().replaceAll([".", "?", ":", "!", '"', "'", ";", "`", ","], "");
-	}
-}
-
-function removeZalgoText(message) {
-	const content = message.find("span");
-
-	if (REGEX_COMBINING_SYMBOL.test(content.innerHTML)) {
-		console.log("Removed zalgo text.", content.innerHTML, content);
-		content.innerHTML = content.innerHTML.replace(REGEX_COMBINING_SYMBOL, "*");
-	}
-}
-
-function addChatFilters() {
-	let chats = doc.findAll(".chat-box-content_2C5UJ");
-	for (let chat of chats) {
-		if (!chat.nextElementSibling) continue;
-		if (chat.nextElementSibling.find(".tt-chat-filter")) continue;
-
-		chat.nextElementSibling.classList.add("tt-modified");
-
-		let filter_wrap = doc.new({ type: "div", class: "tt-chat-filter" });
-		let filter_text = doc.new({ type: "div", text: "Find:" });
-		let filter_input = doc.new({ type: "input" });
-
-		filter_wrap.appendChild(filter_text);
-		filter_wrap.appendChild(filter_input);
-
-		chat.nextElementSibling.insertBefore(filter_wrap, chat.nextElementSibling.firstElementChild);
-
-		// Filtering process
-		filter_input.onkeyup = () => {
-			let keyword = filter_input.value.toLowerCase();
-
-			for (let message of chat.findAll(".overview_1MoPG .message_oP8oM span")) {
-				message.parentElement.style.display = "block";
-
-				if (keyword && message.innerText.toLowerCase().indexOf(keyword) === -1) {
-					message.parentElement.style.display = "none";
-				}
-			}
-
-			if (!keyword) {
-				let viewport = chat.find(".viewport_1F0WI");
-				viewport.scrollTop = viewport.scrollHeight;
-			}
-		};
-	}
-}
-
-function addChatUsernameAutocomplete() {
-	let chats = doc.findAll(".chat-box_Wjbn9");
-	for (let chat of chats) {
-		let chatMessageList = chat.find(".overview_1MoPG");
-		if (!chatMessageList) continue;
-
-		let chatTextbox = chat.find(".chat-box-textarea_2V28W");
-		if (!chatTextbox) continue;
-		if (chatTextbox.classList.contains("tt-chat-autocomplete")) continue;
-
-		chatTextbox.classList.add("tt-chat-autocomplete");
-
-		let currentUsername = null;
-		let currentSearchValue = null;
-		chatTextbox.addEventListener("keydown", (event) => {
-			if (event.key !== "Tab") {
-				currentUsername = null;
-				currentSearchValue = null;
-				return;
-			}
-
-			event.preventDefault();
-
-			let valueToCursor = chatTextbox.value.substr(0, chatTextbox.selectionStart);
-			let searchValueMatch = valueToCursor.match(/([^A-Za-z0-9\-_]?)([A-Za-z0-9\-_]*)$/);
-
-			if (currentSearchValue === null) {
-				currentSearchValue = searchValueMatch[2].toLowerCase();
-			}
-
-			let usernames = Array.from(chatMessageList.findAll(".message_oP8oM > a"))
-				.map((message) => message.innerText.slice(0, -2))
-				.filter((value, index, array) => array.indexOf(value) === index)
-				.sort();
-
-			let matchedUsernames = usernames.filter((username) => username.toLowerCase().indexOf(currentSearchValue) === 0);
-
-			if (matchedUsernames.length === 0) {
-				return;
-			}
-
-			let index = 0;
-			if (currentUsername !== null) {
-				index = matchedUsernames.indexOf(currentUsername) + 1;
-			}
-
-			if (index > matchedUsernames.length - 1) {
-				index = 0;
-			}
-
-			currentUsername = matchedUsernames[index];
-
-			let valueStart = searchValueMatch.index + searchValueMatch[1].length;
-			chatTextbox.value =
-				chatTextbox.value.substring(0, valueStart) + currentUsername + chatTextbox.value.substring(valueToCursor.length, chatTextbox.value.length);
-
-			let selectionIndex = valueStart + currentUsername.length;
-			chatTextbox.setSelectionRange(selectionIndex, selectionIndex);
-		});
-	}
 }
 
 function displayVaultBalance() {
@@ -557,69 +211,6 @@ function addInformationSection() {
 	doc.find("#sidebarroot [class*='user-information_'] [class*='content_']:not([class*='toggle-'])").appendChild(div);
 }
 
-function displayOCtime() {
-	doc.find(".tt-information-section-hr").classList.add("active");
-	doc.find(".tt-information-section").classList.add("active");
-
-	let crime_ids = Object.keys(oc);
-	crime_ids.reverse();
-
-	if (crime_ids.length === 0) {
-		let div = doc.new({ type: "div" });
-		const keySpan = doc.new({ type: "span", text: "OC:", class: "tt-text-link key" });
-		let span = doc.new({ type: "span", text: "N/A" });
-
-		div.appendChild(keySpan);
-		div.appendChild(span);
-		doc.find(".tt-information-section").appendChild(div);
-
-		keySpan.onclick = () => {
-			window.location.href = "https://www.torn.com/factions.php?step=your#/tab=crimes";
-		};
-		return;
-	}
-
-	let found_oc = false;
-
-	for (let crime_id of crime_ids) {
-		if (crime_id === "date") continue;
-		if (oc[crime_id].initiated === 1) continue;
-
-		for (let participant of oc[crime_id].participants) {
-			if (userdata.player_id in participant) {
-				found_oc = true;
-
-				let time_left = timeUntil(new Date(oc[crime_id].time_ready * 1000) - new Date());
-				let div = doc.new({ type: "div" });
-				const keySpan = doc.new({ type: "span", text: "OC: ", class: "tt-text-link key" });
-				let span = doc.new({
-					type: "span",
-					text: time_left,
-					attributes: { "seconds-down": parseInt((new Date(oc[crime_id].time_ready * 1000) - new Date()) / 1000) },
-				});
-
-				if (time_left === -1 || !time_left.includes("d")) span.classList.add("red");
-
-				div.appendChild(keySpan);
-				div.appendChild(span);
-				doc.find(".tt-information-section").appendChild(div);
-
-				keySpan.onclick = () => {
-					window.location.href = "https://www.torn.com/factions.php?step=your#/tab=crimes";
-				};
-			}
-		}
-	}
-
-	if (!found_oc) {
-		let div = doc.new({ type: "div", text: `OC: ` });
-		let span = doc.new({ type: "span", text: "No active OC" });
-
-		div.appendChild(span);
-		doc.find(".tt-information-section").appendChild(div);
-	}
-}
-
 function addReviveListener() {
 	const script = doc.new({
 		type: "script",
@@ -653,45 +244,6 @@ function showCustomConsole() {
 	ttConsole.parent = element;
 
 	doc.find("#mainContainer").insertBefore(element, doc.find("#mainContainer > .clear"));
-}
-
-function highlightRefills() {
-	if (mobile) return;
-
-	if (settings.pages.global.refill_energy && !userdata.refills.energy_refill_used) {
-		doc.find("#barEnergy [class*='bar-name_']").classList.add("tt-refill");
-	}
-	if (settings.pages.global.refill_nerve && !userdata.refills.nerve_refill_used) {
-		doc.find("#barNerve [class*='bar-name_']").classList.add("tt-refill");
-	}
-}
-
-function showMiniprofileInformation(information) {
-	const miniProfile = doc.find("#profile-mini-root .mini-profile-wrapper");
-
-	const lastAction = timeAgo(Date.now() - information.user.lastAction.seconds * 1000);
-
-	const signupDate = new Date(information.user.signUp * 1000);
-	const formattedTime = formatTime([signupDate.getUTCHours(), signupDate.getUTCMinutes(), signupDate.getUTCSeconds()], settings.format.time);
-	const formattedDate = formatDate([signupDate.getUTCDate(), signupDate.getUTCMonth() + 1, signupDate.getUTCFullYear()], settings.format.date);
-
-	requireElement("[class*='-profile-mini-_userProfileWrapper']", { parent: miniProfile }).then(() => {
-		setTimeout(() => {
-			miniProfile.find("[class*='-profile-mini-_userProfileWrapper']").appendChild(
-				doc.new({
-					type: "div",
-					class: "tt-mini-data",
-					children: [
-						doc.new({ type: "strong", text: "Last Action: " }),
-						doc.new({ type: "span", text: lastAction }),
-						// doc.new("br"),
-						// doc.new({ type: "strong", text: "Signup: " }),
-						// doc.new({ type: "span", text: `${formattedTime} ${formattedDate}` }),
-					],
-				})
-			);
-		}, 500);
-	});
 }
 
 function nukeReviveScript() {
@@ -801,34 +353,6 @@ function addPeopleBoxFilter() {
 	}
 }
 
-function hideGymHighlight() {
-	if (settings.pages.gym.hide_gym_highlight) {
-		const navGym = doc.find("#nav-gym");
-		const gymClass = [...navGym.classList].find((name) => name.includes("available___"));
-		const svg = navGym.find("svg");
-		if (!gymClass) return;
-
-		if (isDarkMode()) {
-			if (!mobile) {
-				svg.setAttribute("fill", "url(#sidebar_svg_gradient_regular_mobile)");
-				svg.setAttribute("filter", "url(#svg_sidebar_mobile)");
-			} else {
-				svg.setAttribute("fill", svg.getAttribute("fill").replace("_green", ""));
-				svg.setAttribute("filter", svg.getAttribute("filter").replace("_green", ""));
-			}
-		} else {
-			if (mobile) {
-				svg.setAttribute("fill", "url(#sidebar_svg_gradient_regular_mobile)");
-				svg.setAttribute("filter", "url(#svg_sidebar_mobile)");
-			} else {
-				svg.setAttribute("fill", "url(#sidebar_svg_gradient_regular_desktop)");
-			}
-		}
-
-		navGym.classList.remove(gymClass);
-	}
-}
-
 function chainTimerHighlight() {
 	let blinkIntervalId;
 	let chainObserver = new MutationObserver(() => {
@@ -841,46 +365,6 @@ function chainTimerHighlight() {
 		}
 	});
 	chainObserver.observe(doc.find("a#barChain [class^='bar-value_']"), { characterData: true });
-}
-
-function tradeChatPostTimer() {
-	let canPostHTML =
-		'<div id="tt-trade-post-timer"><span class="tt-trade-chat-timer red" style="display: none;">Don\'t post</span><span class="tt-trade-chat-timer green" style="display: block;">Can post</span></div>';
-	let dontPostHTML =
-		'<div id="tt-trade-post-timer"><span class="tt-trade-chat-timer red" style="display: block;">Don\'t post</span><span class="tt-trade-chat-timer green" style="display: none;">Can post</span></div>';
-	if (doc.findAll("div[class*='chat-box'][class*='trade'] div[class*='chat-box-input_'] div#tt-trade-post-timer").length === 0) {
-		if (last_trade_post_time && new Date() - new Date(last_trade_post_time) < 60 * 1000) {
-			doc.find("div[class*='chat-box'][class*='trade'] div[class*='chat-box-input_']").insertAdjacentHTML("afterBegin", dontPostHTML);
-			setTimeout(() => {
-				let canPost = doc.find("div[class*='chat-box'][class*='trade'] div[class*='chat-box-input_'] div#tt-trade-post-timer").lastElementChild;
-				let dontPost = doc.find("div[class*='chat-box'][class*='trade'] div[class*='chat-box-input_'] div#tt-trade-post-timer").firstElementChild;
-				if (canPost) canPost.style.display = "block";
-				if (dontPost) dontPost.style.display = "none";
-			}, 60 * 1000 - (new Date() - new Date(last_trade_post_time)));
-		} else {
-			if (doc.find("div[class*='chat-box'][class*='trade'] div[class*='chat-box-input_']"))
-				doc.find("div[class*='chat-box'][class*='trade'] div[class*='chat-box-input_']").insertAdjacentHTML("afterBegin", canPostHTML);
-		}
-		if (doc.find("div[class*='chat-box'][class*='trade'] div[class*='chat-box-input_'] textarea"))
-			doc.find("div[class*='chat-box'][class*='trade'] div[class*='chat-box-input_'] textarea").addEventListener("keypress", (event) => {
-				if (event.keyCode == 13 && doc.find("div[class*='chat-box'][class*='trade'] div[class*='chat-box-input_'] div#tt-trade-post-timer")) {
-					let new_last_trade_post_time = new Date().toString();
-					ttStorage.set({ last_trade_post_time: new_last_trade_post_time });
-					last_trade_post_time = new_last_trade_post_time;
-					doc.find("div[class*='chat-box'][class*='trade'] div[class*='chat-box-input_'] div#tt-trade-post-timer").lastElementChild.style.display =
-						"none";
-					doc.find("div[class*='chat-box'][class*='trade'] div[class*='chat-box-input_'] div#tt-trade-post-timer").firstElementChild.style.display =
-						"block";
-					setTimeout(() => {
-						let canPost = doc.find("div[class*='chat-box'][class*='trade'] div[class*='chat-box-input_'] div#tt-trade-post-timer").lastElementChild;
-						let dontPost = doc.find("div[class*='chat-box'][class*='trade'] div[class*='chat-box-input_'] div#tt-trade-post-timer")
-							.firstElementChild;
-						if (canPost) canPost.style.display = "block";
-						if (dontPost) dontPost.style.display = "none";
-					}, 60000);
-				}
-			});
-	}
 }
 
 function chainBonusWatch() {
@@ -952,50 +436,6 @@ function upkeepMoreThan() {
 		} else {
 			doc.find("#sidebarroot #nav-properties svg").setAttribute("fill", "url(#sidebar_svg_gradient_regular_desktop_green)");
 		}
-	}
-}
-
-function easterEggs() {
-	const mainContainer = doc.find("#mainContainer");
-	if (!mainContainer) return;
-
-	const EGG_SELECTOR = "img[src^='competition.php?c=EasterEggs'][src*='step=eggImage'][src*='access_token=']";
-
-	for (const egg of doc.findAll(EGG_SELECTOR)) {
-		highlightEgg(egg);
-	}
-	new MutationObserver((mutations, observer) => {
-		for (const node of mutations.flatMap((mutation) => [...mutation.addedNodes])) {
-			if (node.nodeType !== Node.ELEMENT_NODE || !node.find(EGG_SELECTOR)) continue;
-
-			highlightEgg(node.find(EGG_SELECTOR));
-			observer.disconnect();
-			break;
-		}
-	}).observe(mainContainer, { childList: true });
-
-	function highlightEgg(egg) {
-		const canvas = document.new({ type: "canvas", attributes: { width: egg.width, height: egg.height } });
-		const context = canvas.getContext("2d");
-		context.drawImage(egg, 0, 0);
-
-		// Check if the egg has any non-transparent pixels, to make sure it's not a fake egg.
-		if (!canvas.width || !context.getImageData(0, 0, canvas.width, canvas.height).data.some((d) => d !== 0)) return;
-
-		const overlay = doc.find(".tt-black-overlay");
-
-		overlay.classList.add("active");
-		const ttEasterEggDiv = doc.new({
-			type: "div",
-			class: "tt-easter-egg-div",
-			text: "There is an Easter Egg on this page !",
-			children: doc.new({ type: "button", class: "tt-easter-egg-button", text: "Close" }),
-		});
-		doc.find(".tt-black-overlay").appendChild(ttEasterEggDiv);
-		ttEasterEggDiv.find("button").addEventListener("click", () => {
-			ttEasterEggDiv.remove();
-			overlay.classList.remove("active");
-		});
 	}
 }
 

@@ -3,7 +3,7 @@ let member_info_added = false;
 
 requireDatabase().then(() => {
 	addXHRListener((event) => {
-		const { page, json, xhr } = event.detail;
+		const { page, xhr } = event.detail;
 
 		const params = new URLSearchParams(xhr.requestBody);
 		const step = params.get("step");
@@ -68,7 +68,7 @@ requireDatabase().then(() => {
 			// Controls page
 			doc.find(".faction-tabs li[data-case=controls]").addEventListener("click", loadControls);
 		} else {
-			// noinspection EqualityComparisonWithCoercionJS
+			// noinspection EqualityComparisonWithCoercionJS,JSUnresolvedVariable
 			ownFaction = userdata.faction ? getSearchParameters().get("ID") == userdata.faction.faction_id : false;
 
 			loadInfo();
@@ -141,12 +141,8 @@ function loadUpgrades() {
 }
 
 function loadArmory() {
-	if (settings.pages.items.drug_details) drugInfo();
-
 	armoryTabsLoaded().then(() => {
 		armoryFilter();
-
-		if (settings.pages.items.highlight_bloodbags !== "none") highlightBloodBags();
 	});
 }
 
@@ -167,7 +163,6 @@ function loadControls() {
 
 function loadGiveToUser() {
 	if (settings.pages.faction.banking_tools) {
-		requirePlayerList(".user-info-list-wrap.money-depositors").then(showFactionBalance);
 		requireElement("#money-user").then(suggestBalance);
 	}
 }
@@ -181,6 +176,7 @@ function ocTimes(oc, format) {
 		let span = doc.new({ type: "span", class: "tt-oc-time" });
 
 		if (oc[crime_id]) {
+			// noinspection JSUnresolvedVariable
 			finish_time = oc[crime_id].time_ready;
 			// noinspection JSUnusedLocalSymbols
 			let [day, month, year, hours, minutes, seconds] = dateParts(new Date(finish_time * 1000));
@@ -191,98 +187,6 @@ function ocTimes(oc, format) {
 		}
 
 		crime.find(".status").appendChild(span);
-	}
-}
-
-function shortenArmoryNews() {
-	let all_news = doc.findAll("#tab4-4 .news-list>li");
-	let db = {};
-
-	for (let news of all_news) {
-		let info = news.find(".info").innerText;
-
-		if (info in db) {
-			db[info].count++;
-			db[info].first_date = news.find(".date").innerText;
-		} else {
-			db[info] = {
-				count: 1,
-				username: news.find(".info a").innerText,
-				link: news.find(".info a").getAttribute("href"),
-				last_date: news.find(".date").innerText,
-			};
-		}
-	}
-
-	doc.find("#tab4-4 .news-list").innerHTML = "";
-	console.log("db", db);
-
-	for (let key in db) {
-		let li = doc.new({ type: "li" });
-		let date = doc.new({ type: "span", class: "date" });
-		let info = doc.new({ type: "span", class: "info" });
-		let a = doc.new({ type: "a", text: db[key].username, attributes: { href: db[key].link } });
-		info.appendChild(a);
-
-		if (db[key].first_date) {
-			let upper_time = db[key].first_date.slice(0, db[key].first_date.length - (db[key].first_date.indexOf("\n") + 4));
-			let upper_date = db[key].first_date.slice(db[key].first_date.indexOf("\n"), db[key].first_date.length - 3);
-			let lower_time = db[key].last_date.slice(0, db[key].last_date.length - (db[key].last_date.indexOf("\n") + 4));
-			let lower_date = db[key].last_date.slice(db[key].last_date.indexOf("\n"), db[key].last_date.length - 3);
-
-			let upper_date_span = doc.new("span");
-			upper_date_span.setClass("left-date");
-			upper_date_span.innerText = `${upper_time}${upper_date}`;
-			let separator = doc.new("span");
-			separator.setClass("separator");
-			separator.innerText = "-";
-			let lower_date_span = doc.new("span");
-			lower_date_span.setClass("right-date");
-			lower_date_span.innerText = `${lower_time}${lower_date}`;
-
-			if (upper_time !== lower_time || upper_date !== lower_date) {
-				date.appendChild(upper_date_span);
-				date.appendChild(separator);
-			}
-			date.appendChild(lower_date_span);
-		} else {
-			date.innerText = db[key].last_date;
-		}
-
-		let keywords = ["used", "filled", "loaned", "retrieved", "returned", "deposited", "gave"];
-		let inner_span = doc.new("span");
-
-		for (let keyword of keywords) {
-			if (key.includes(keyword)) {
-				if (key.includes("one")) {
-					let amount_span = doc.new({
-						type: "span",
-						text: " " + db[key].count + "x",
-						attributes: { style: "font-weight: 600" },
-					});
-					inner_span.innerHTML += ` ${keyword}`;
-					inner_span.appendChild(amount_span);
-					inner_span.innerHTML += key.split(" one")[1];
-				} else if (key.includes("1 x")) {
-					let amount_span = doc.new({
-						type: "span",
-						text: " " + db[key].count + "x",
-						attributes: { style: "font-weight: 600" },
-					});
-					inner_span.innerHTML += ` ${keyword}`;
-					inner_span.appendChild(amount_span);
-					inner_span.innerHTML += key.split(" 1 x")[1];
-				} else {
-					inner_span.innerText = ` ${keyword}` + key.split(keyword)[1];
-				}
-				break;
-			}
-		}
-
-		info.appendChild(inner_span);
-		li.appendChild(date);
-		li.appendChild(info);
-		doc.find("#tab4-4 .news-list").appendChild(li);
 	}
 }
 
@@ -312,17 +216,6 @@ function subpageLoaded(page) {
 		default:
 			return Promise.resolve();
 	}
-}
-
-function newstabLoaded(tab) {
-	return new Promise((resolve) => {
-		let checker = setInterval(() => {
-			if (tab === "armory" && doc.find("#tab4-4 .news-list li:not(.last)")) {
-				resolve(true);
-				return clearInterval(checker);
-			}
-		}, 25);
-	});
 }
 
 function openOCs() {
@@ -377,6 +270,7 @@ function showNNB() {
 					}
 
 					let player_id = player.find(".h").getAttribute("href").split("XID=")[1];
+					// noinspection JSUnresolvedVariable
 					let nnb = result.members[player_id] ? result.members[player_id].natural_nerve : "N/A";
 
 					let col = doc.new({ type: "li", class: `tt-nnb ${mobile ? "torntools-mobile" : ""}`, text: nnb });
@@ -409,6 +303,7 @@ function showNNB() {
 				}
 
 				let player_id = player.find(".h").getAttribute("href").split("XID=")[1];
+				// noinspection JSUnresolvedVariable
 				let nnb = result.members[player_id] ? result.members[player_id].natural_nerve : "N/A";
 
 				let col = doc.new({ type: "li", class: `tt-nnb short ${mobile ? "torntools-mobile" : ""}`, text: nnb });
@@ -524,11 +419,8 @@ function armoryWorth() {
 				}
 			}
 
-			// Cesium
-			if (result.cesium) {
-			}
-
 			// Points
+			// noinspection JSUnresolvedVariable
 			total += result.points * torndata.pawnshop.points_value;
 
 			const li = doc.new({ type: "li" });
@@ -579,9 +471,11 @@ async function showUserInfo() {
 			container.appendChild(row);
 
 			if (!dataInformation.error) {
+				// noinspection JSUnresolvedVariable
 				let lastAction = (Date.now() - dataInformation.members[userId].last_action.timestamp * 1000) / 1000;
 				if (lastAction < 0) lastAction = 0;
 
+				// noinspection JSUnresolvedVariable
 				row.appendChild(
 					doc.new({
 						type: "div",
@@ -591,8 +485,11 @@ async function showUserInfo() {
 					})
 				);
 
+				// noinspection JSUnresolvedVariable
 				if (dataInformation.donations && dataInformation.donations[userId]) {
+					// noinspection JSUnresolvedVariable
 					if (dataInformation.donations[userId].money_balance > 0) {
+						// noinspection JSUnresolvedVariable
 						row.appendChild(
 							doc.new({
 								type: "div",
@@ -600,7 +497,9 @@ async function showUserInfo() {
 							})
 						);
 					}
+					// noinspection JSUnresolvedVariable
 					if (dataInformation.donations[userId].points_balance > 0) {
+						// noinspection JSUnresolvedVariable
 						row.appendChild(
 							doc.new({
 								type: "div",
@@ -613,6 +512,7 @@ async function showUserInfo() {
 				// Activity notifications
 				const checkpoints = settings.inactivity_alerts_faction;
 				for (let checkpoint of Object.keys(checkpoints).sort((a, b) => b - a)) {
+					// noinspection JSUnresolvedVariable
 					if (new Date() - new Date(dataInformation.members[userId].last_action.timestamp * 1000) >= parseInt(checkpoint)) {
 						console.log(checkpoints[checkpoint]);
 						tableRow.style.backgroundColor = `${checkpoints[checkpoint]}`;
@@ -641,7 +541,7 @@ async function showUserInfo() {
 
 			if (!hasCachedEstimate(userId)) estimateCount++;
 
-			new MutationObserver((mutations, observer) => {
+			new MutationObserver(() => {
 				container.style.display = tableRow.style.display === "none" ? "none" : "block";
 			}).observe(tableRow, { attributes: true, attributeFilter: ["style"] });
 
@@ -738,116 +638,6 @@ function showRecommendedNNB() {
 		let inner_span = doc.new({ type: "span", class: "tt-span", text: nnb_dict[name_div.innerText] });
 		name_div.appendChild(inner_span);
 	}
-}
-
-function drugInfo() {
-	let item_info_container_mutation = new MutationObserver((mutations) => {
-		for (let mutation of mutations) {
-			if (mutation.target.classList.contains("view-item-info") && (mutation.addedNodes.length > 0 || mutation.attributeName === "style")) {
-				let el = mutation.target;
-				itemInfoLoaded(el).then(() => {
-					let item_name = el.find("span.bold").innerText;
-					if (item_name.indexOf("The") > -1) item_name = item_name.split("The ")[1];
-
-					let drug_details = DRUG_INFORMATION[item_name.toLowerCase().replace(/ /g, "_")];
-					if (drug_details === undefined) {
-						return;
-					}
-
-					// Remove current info
-					for (let eff of el.findAll(".item-effect")) {
-						eff.remove();
-					}
-
-					// Pros
-					if (drug_details.pros) {
-						let pros_header = doc.new({
-							type: "div",
-							class: "t-green bold item-effect m-top10",
-							text: "Pros:",
-						});
-						el.find(".info-msg").appendChild(pros_header);
-
-						for (let eff of drug_details.pros) {
-							let pros_div = doc.new({ type: "div", class: "t-green bold item-effect tabbed", text: eff });
-							el.find(".info-msg").appendChild(pros_div);
-						}
-					}
-
-					// Cons
-					if (drug_details.cons) {
-						let cons_header = doc.new({ type: "div", class: "t-red bold item-effect", text: "Cons:" });
-						el.find(".info-msg").appendChild(cons_header);
-
-						for (let eff of drug_details.cons) {
-							let cons_div = doc.new({ type: "div", class: "t-red bold item-effect tabbed", text: eff });
-							el.find(".info-msg").appendChild(cons_div);
-						}
-					}
-
-					// Cooldown
-					if (drug_details.cooldown) {
-						let cooldown_div = doc.new({
-							type: "div",
-							class: "t-red bold item-effect",
-							text: `Cooldown: ${drug_details.cooldown}`,
-						});
-						el.find(".info-msg").appendChild(cooldown_div);
-					}
-
-					// Overdose
-					if (drug_details.overdose) {
-						let od_header = doc.new({ type: "div", class: "t-red bold item-effect", text: "Overdose:" });
-						el.find(".info-msg").appendChild(od_header);
-
-						// bars
-						if (drug_details.overdose.bars) {
-							let bars_header = doc.new({
-								type: "div",
-								class: "t-red bold item-effect tabbed",
-								text: "Bars",
-							});
-							el.find(".info-msg").appendChild(bars_header);
-
-							for (let bar_eff of drug_details.overdose.bars) {
-								let bar_eff_div = doc.new({
-									type: "div",
-									class: "t-red bold item-effect double-tabbed",
-									text: bar_eff,
-								});
-								el.find(".info-msg").appendChild(bar_eff_div);
-							}
-						}
-
-						// faction time
-						if (drug_details.overdose.hosp_time) {
-							let hosp_div = doc.new({
-								type: "div",
-								class: "t-red bold item-effect tabbed",
-								text: `Hospital: ${drug_details.overdose.hosp_time}`,
-							});
-							el.find(".info-msg").appendChild(hosp_div);
-						}
-
-						// extra
-						if (drug_details.overdose.extra) {
-							let extra_div = doc.new({
-								type: "div",
-								class: "t-red bold item-effect tabbed",
-								text: `Extra: ${drug_details.overdose.extra}`,
-							});
-							el.find(".info-msg").appendChild(extra_div);
-						}
-					}
-				});
-			}
-		}
-	});
-	item_info_container_mutation.observe(doc.find("body"), { childList: true, subtree: true, attributes: true });
-}
-
-function itemInfoLoaded(element) {
-	return requireElement(".ajax-placeholder", { invert: true });
 }
 
 function addFilterToTable(list, title) {
@@ -972,7 +762,7 @@ function addFilterToTable(list, title) {
 		let filterContainerSelect = filter_container.find("#position-filter select");
 		let position = positionSpan.innerText;
 		if (!filterContainerSelect.innerHTML.includes(">" + position + "<"))
-			filterContainerSelect.insertAdjacentHTML("beforeEnd", `<option value="${position}">${position}</option>`);
+			filterContainerSelect.insertAdjacentHTML("beforeend", `<option value="${position}">${position}</option>`);
 	});
 
 	// Level slider
@@ -1021,6 +811,7 @@ function addFilterToTable(list, title) {
 	filter_container.find("#position-filter select").addEventListener("change", () => applyFilters());
 	let filter_observer = new MutationObserver((mutations) => {
 		for (let mutation of mutations) {
+			// noinspection JSUnresolvedVariable
 			if (
 				mutation.type === "attributes" &&
 				mutation.target.classList &&
@@ -1401,67 +1192,6 @@ function armoryFilter() {
 	}
 }
 
-const ALLOWED_BLOOD = {
-	"o+": [738, 739], // 738
-	"o-": [739], // 739
-	"a+": [732, 733, 738, 739], // 732
-	"a-": [733, 739], // 733
-	"b+": [734, 735, 738, 739], // 734
-	"b-": [735, 739], // 735
-	"ab+": [732, 733, 734, 735, 736, 737, 738, 739], // 736
-	"ab-": [733, 735, 737, 739], // 737
-};
-
-function highlightBloodBags() {
-	const section = doc.find("ul[aria-label='Faction armoury tabs'] > li[aria-selected='true']").getAttribute("aria-controls").replace("armoury-", "");
-	if (section === "medical") highlight();
-
-	new MutationObserver((mutations) => {
-		if (
-			!mutations
-				.filter((mut) => mut.type === "childList" && mut.addedNodes.length)
-				.flatMap((mut) => Array.from(mut.addedNodes))
-				.some((node) => node.classList && node.classList.contains("item-list"))
-		)
-			return;
-
-		const section = doc.find("ul[aria-label='Faction armoury tabs'] > li[aria-selected='true']").getAttribute("aria-controls").replace("armoury-", "");
-		if (section !== "medical") return;
-
-		highlight();
-	}).observe(doc.find(`#faction-armoury-tabs`), { childList: true, subtree: true });
-
-	function highlight() {
-		const allowedBlood = ALLOWED_BLOOD[settings.pages.items.highlight_bloodbags];
-		const items = doc.findAll(`#faction-armoury-tabs .armoury-tabs[aria-expanded='true'] .item-list > li`);
-
-		for (let item of items) {
-			if (!item.find(".name") || item.find(".name").classList.contains(".tt-modified")) continue;
-
-			if (item.find(".img-wrap").getAttribute("data-id") === "1012") continue; // is an irradiated blood bag
-
-			if (!item.find(".name").innerText.split(" x")[0].includes("Blood Bag : ")) continue; // is not a filled blood bag
-
-			const classes = item.find(".name").classList;
-
-			classes.add("tt-modified");
-
-			let bloodId = item.find(".img-wrap").getAttribute("data-id");
-
-			if (allowedBlood.includes(parseInt(bloodId))) classes.add("tt-good_blood");
-			else classes.add("tt-bad_blood");
-
-			//Add blood bag value
-			let price = itemlist.items[bloodId].market_value;
-			let new_element = doc.new("span");
-
-			new_element.setClass("tt-item-price");
-			new_element.innerText = `$${numberWithCommas(price, false)}`;
-			item.find(".name").appendChild(new_element);
-		}
-	}
-}
-
 function armoryTabsLoaded() {
 	return requireElement("ul[aria-label='Faction armoury tabs'] > li[aria-selected='true']");
 }
@@ -1539,7 +1269,10 @@ function observeDescription() {
 			for (let mutation of mutations) {
 				for (let node of mutation.removedNodes) {
 					if (hasClass(node, "your") || hasClass(node, "enemy")) {
-						if (hasClass(mutation.nextSibling, "tt-userinfo-container")) mutation.nextSibling.remove();
+						if (hasClass(mutation.nextSibling, "tt-userinfo-container")) {
+							// noinspection JSUnresolvedFunction
+							mutation.nextSibling.remove();
+						}
 					}
 				}
 
@@ -1594,58 +1327,11 @@ function observeDescription() {
 }
 
 function highlightOwnOC() {
+	// noinspection JSUnresolvedVariable
 	const member = document.find(`.crimes-list > li.item-wrap .team > a[href="/profiles.php?XID=${userdata.player_id}"]`);
 	if (!member) return;
 
 	findParent(member, { class: "item-wrap" }).setAttribute("background-color", "green");
-}
-
-function showFactionBalance() {
-	const alreadyShown = doc.find(".user-info-list-wrap.money-depositors > li.depositor.tt-modified");
-
-	const balanceFaction = parseInt(doc.find("#money .give-block *[data-faction-money]").getAttribute("data-faction-money"));
-	let balancePlayers = 0;
-	let factionShow, factionShowAlt, hasHonors;
-
-	for (let balanceRow of doc.findAll(".user-info-list-wrap.money-depositors > li.depositor")) {
-		balancePlayers += parseInt(balanceRow.find(".amount .money").getAttribute("data-value"));
-
-		if (!alreadyShown && !factionShow && !balanceRow.classList.contains("inactive")) {
-			hasHonors = balanceRow.find(".factionWrap .user.faction img");
-
-			if (hasHonors) {
-				factionShow = hasHonors.getAttribute("src");
-				factionShowAlt = hasHonors.getAttribute("alt");
-				hasHonors = true;
-			} else {
-				factionShow = balanceRow.find(".factionWrap .user.faction").innerText;
-			}
-
-			hasHonors = !!hasHonors;
-		}
-	}
-
-	if (alreadyShown) {
-		alreadyShown.find(".money").innerText = FORMATTER_NO_DECIMALS.format(balanceFaction - balancePlayers);
-	} else {
-		const row = doc.new({ type: "li", class: "depositor tt-modified" });
-
-		row.innerHTML = `
-			<div class="clearfix">
-				<div class="user name btFaction" style="width: 147px;">
-					${hasHonors ? `<img src="${factionShow}" border="0" alt="${factionShowAlt}"/>` : `<span>${factionShow}</span>`}
-				</div>
-				<div class="amount">
-					<div class="show">
-						$<span class="money" id="totalFaction">${FORMATTER_NO_DECIMALS.format(balanceFaction - balancePlayers)}</span>
-					</div>
-				</div>
-			</div>
-		`;
-
-		const userWrap = doc.find(".user-info-list-wrap.money-depositors");
-		userWrap.insertBefore(row, userWrap.firstElementChild);
-	}
 }
 
 function suggestBalance() {
@@ -1685,7 +1371,7 @@ function displayWarOverTimes() {
 				let time = timerParts[0] * 24 * 60 * 60 + timerParts[1] * 60 * 60 + timerParts[2] * 60 + timerParts[3];
 				let overDate = formatDateObject(new Date(new Date().setSeconds(time)));
 				let rawHTML = `<div class="timer tt-timer">${overDate.formattedTime} ${overDate.formattedDate}</div>`;
-				timer.insertAdjacentHTML("afterEnd", rawHTML);
+				timer.insertAdjacentHTML("afterend", rawHTML);
 			}
 		});
 	});
@@ -1694,12 +1380,12 @@ function displayWarOverTimes() {
 function foldFactionDesc() {
 	if (!doc.find("div[role='main'] i.tt-collapse-desc")) {
 		let rawHTML = "<i class='tt-collapse-desc fas fa-caret-down' style='padding-top: 9px;padding-left: 7px;'></i>";
-		doc.find("div[role='main'] div.tt-checkbox-wrap").insertAdjacentHTML("beforeEnd", rawHTML);
+		doc.find("div[role='main'] div.tt-checkbox-wrap").insertAdjacentHTML("beforeend", rawHTML);
 		doc.find("i.tt-collapse-desc").addEventListener("click", (event) => {
 			event.target.classList.toggle("fa-caret-down");
 			event.target.classList.toggle("fa-caret-right");
 			let facDesc = doc.find("div[role='main'] div.cont-gray10");
-			if (facDesc.style.display == "none") {
+			if (facDesc.style.display === "none") {
 				facDesc.toggleAttribute("style");
 			} else {
 				facDesc.style.display = "none";
@@ -1728,7 +1414,7 @@ function exportChallengeContributionsCSV() {
 				doc.find("div#factions div#faction-upgrades div.body div#stu-confirmation div.description-wrap div.contributions-wrap")
 			) {
 				doc.find("div#factions div#faction-upgrades div.body div#stu-confirmation div.description-wrap div.contributions-wrap").insertAdjacentHTML(
-					"beforeBegin",
+					"beforebegin",
 					rawHTML
 				);
 				doc.find(

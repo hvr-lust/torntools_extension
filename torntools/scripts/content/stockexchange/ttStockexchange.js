@@ -15,21 +15,6 @@ requireDatabase().then(() => {
 			}
 		});
 
-		for (let stock of doc.findAll(".stock-list > .item")) {
-			const heading = stock.firstElementChild; // heading
-
-			const name = heading.find(".name").innerText;
-
-			// Open torntools redirect
-			if (ttRedirect && name === ttRedirect) stock.firstElementChild.click();
-
-			if (settings.pages.stockexchange.acronyms) {
-				const acronym = stock.getAttribute("data-stock").toUpperCase();
-
-				stock.find(".name").innerText = `(${acronym}) ${name}`;
-			}
-		}
-
 		hideStockBlocks();
 
 		if (settings.pages.stockexchange.advanced) addFilter(filters);
@@ -229,10 +214,6 @@ function addFilter(filters) {
 
 		ttStorage.change({ filters: { stock_exchange: filter } });
 	}
-}
-
-function stockProfileLoaded() {
-	return requireElement(".item-wrap .stock-list .profile-wrap[style*='display: block;'] .tabs-title, .item .acc-body[style*='display: block;'] .tabs-title");
 }
 
 function showTotalPortfolioValue() {
