@@ -105,9 +105,15 @@ const DRUG_INFORMATION = {
 		},
 	},
 	love_juice: {
-		pros: ["Cost of Attacking & Reviving reduced to 15 Energy", "+50% Speed", "+25% Dexterity"],
+		pros: ["Cost of Attacking & Reviving reduced by 10 Energy", "+50% Speed", "+25% Dexterity"],
 		cons: ["Only works on Valentine's Day"],
 		cooldown: "5 hours",
+	},
+	felovax: {
+		pros: ["Use Felovax while in jail to instantly get transfered to hospital.", "You can then use Zylkene to get out of hospital instantly."],
+	},
+	zylkene: {
+		pros: ["Use Zylkene while in hospital to instantly get out.", "Use after Felovax (optional but the combination works well - Jail->Hospital->Okay)."],
 	},
 };
 
@@ -143,7 +149,7 @@ const COMPANY_INFORMATION = {
 		1: {
 			name: "Dauntless",
 			cost: "1",
-			effect: "1 nerve",
+			effect: "2 nerve",
 		},
 		3: {
 			name: "Free Ride",
@@ -359,7 +365,7 @@ const COMPANY_INFORMATION = {
 		1: {
 			name: "Audaciousness",
 			cost: "1",
-			effect: "1 nerve",
+			effect: "2 nerve",
 		},
 		3: {
 			name: "Illumination",
@@ -526,7 +532,7 @@ const COMPANY_INFORMATION = {
 		3: {
 			name: "Free Drinks",
 			cost: "1",
-			effect: "1 nerve",
+			effect: "2 nerve",
 		},
 		5: {
 			name: "High Heels",
@@ -634,7 +640,7 @@ const COMPANY_INFORMATION = {
 		3: {
 			name: "Free Drinks",
 			cost: "1",
-			effect: "1 nerve",
+			effect: "2 nerve",
 		},
 		5: {
 			name: "Thong",
@@ -737,12 +743,12 @@ const COMPANY_INFORMATION = {
 		1: {
 			name: "Blood Thirst",
 			cost: "1",
-			effect: "1 nerve",
+			effect: "2 nerve",
 		},
 		3: {
-			name: "Butcher",
+			name: "Blood Splatter",
 			cost: "Passive",
-			effect: "10% melee weapon damage",
+			effect: "50% reduction in crime experience penalties",
 		},
 		5: {
 			name: "Carnage",
@@ -1181,6 +1187,7 @@ const CHAIN_BONUSES = [10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000, 25000
 const STORAGE = {
 	// app settings
 	api_key: undefined,
+	last_trade_post_time: "",
 	updated: "force_true",
 	api: {
 		count: 0,
@@ -1255,8 +1262,11 @@ const STORAGE = {
 	chat_highlight: {
 		$player: "#7ca900",
 	},
+	users_alias: {},
 	hide_icons: [],
 	hide_casino_games: [],
+	hide_stock_blocks: [],
+	hidden_portfolio: {},
 	hide_areas: [],
 	quick: {
 		items: [],
@@ -1291,6 +1301,7 @@ const STORAGE = {
 		},
 		hospital: {
 			activity: [],
+			revives_enabled: false,
 			faction: "",
 			time: [],
 			level: [],
@@ -1332,6 +1343,7 @@ const STORAGE = {
 			activity: [],
 			status: [],
 			level: [],
+			faction: "",
 			special: {
 				isfedded: "both",
 				newplayer: "both",
@@ -1345,18 +1357,11 @@ const STORAGE = {
 		faction_armory: {},
 		container_open: {},
 		stock_exchange: {
-			portfolio: {
-				forecast: [],
-				worth: [],
-				name: "",
-				profitLoss: [],
-				listedOnly: false,
-			},
-			market: {
-				forecast: [],
-				worth: [],
-				name: "",
-			},
+			owned: true,
+			name: "",
+			change: [],
+			totalProfitLoss: [],
+			benefit: false,
 		},
 		crimes: {
 			safeCrimes: false,
@@ -1408,6 +1413,7 @@ const STORAGE = {
 		clean_flight: false,
 		// "remove_info_boxes": false,
 		theme: "default",
+		page_theme: "light",
 		force_tt: true,
 		check_extensions: true,
 		developer: false,
@@ -1469,6 +1475,7 @@ const STORAGE = {
 			city: {
 				items: true,
 				items_value: true,
+				items_images: true,
 				closed_highlight: true,
 			},
 			profile: {
@@ -1476,11 +1483,13 @@ const STORAGE = {
 				show_id: true,
 				loot_times: true,
 				status_indicator: true,
-				block_ally_attacks: true,
+				block_ally_attacks: false,
 				notes: true,
+				show_chain_warning: false,
 			},
 			racing: {
 				upgrades: true,
+				win_percentage: true,
 			},
 			gym: {
 				estimated_energy: true,
@@ -1488,8 +1497,12 @@ const STORAGE = {
 				disable_speed: false,
 				disable_defense: false,
 				disable_dexterity: false,
+				hide_gym_highlight: false,
 				specialty_gym_1: "",
 				specialty_gym_2: "",
+				warn_when_stacking: false,
+				warn_when_chain: true,
+				warn_when_chain_length: 10,
 			},
 			shop: {
 				profits: true,
@@ -1506,11 +1519,16 @@ const STORAGE = {
 				highlight_bloodbags: "none",
 				show_missing_plushies: false,
 				show_missing_flowers: false,
+				show_book_effects: true,
+				show_alcohol_nerve_gains: true,
+				show_candy_happy_gains: true,
+				show_e_can_gains: true,
 			},
 			travel: {
 				profits: true,
 				destination_table: true,
 				cooldown_warnings: true,
+				land_and_return_times: true,
 				destination_table_last_country: true,
 			},
 			api: {
@@ -1527,6 +1545,7 @@ const STORAGE = {
 				info_page_full: false,
 				armory_worth: false,
 				member_info: false,
+				member_index: true,
 				banking_tools: true,
 			},
 			properties: {
@@ -1535,9 +1554,11 @@ const STORAGE = {
 			stockexchange: {
 				acronyms: true,
 				advanced: true,
+				hide_stock_block: true,
 			},
 			bazaar: {
 				worth: false,
+				display_total_price: true,
 				max_buy_ignore_cash: false,
 			},
 			company: {
@@ -1547,20 +1568,27 @@ const STORAGE = {
 				vault_balance: false,
 				vault_balance_own: false,
 				notes: true,
+				npc_loot_info: true,
 				hide_upgrade: false,
 				align_left: false,
 				find_chat: true,
+				trade_chat_timer: true,
 				autocomplete_chat: true,
 				hide_chat: false,
 				show_toggle_chat: true,
 				collapse_areas: false,
 				oc_time: true,
+				easter_eggs: false,
 				hide_leave: false,
 				block_zalgo: true,
+				show_settings_areas_link: true,
 				refill_energy: true,
 				refill_nerve: false,
 				miniprofile_last_action: true,
 				enable_central_revive: false,
+				upkeep_more_than: 5000000,
+				highlight_chain_timer: false,
+				highlight_chain_length: 10,
 			},
 			jail: {
 				quick_bail: false,
@@ -1577,11 +1605,17 @@ const STORAGE = {
 			displaycase: {
 				worth: false,
 			},
+			attack: {
+				warn_when_stacking: false,
+				warn_when_attack_timeout: true,
+				disable_attack_stacked_warning_until: "",
+			},
 		},
 		scripts: {
 			stats_estimate: {
 				global: true,
 				profile: true,
+				attack_page: false,
 				userlist: false,
 				abroad: false,
 				hall_of_fame: false,
@@ -1835,14 +1869,14 @@ const navbar = {
 			sidebarBlock.innerHTML = `
                 <div class="content___kMC8x">
                     <div class="areas___2pu_3">
-                        <div class="toggle-block___jneNE">
+                        <div class="toggle-block___358Y7">
                             <div class="tt-title tt-nav ${THEME_CLASSES[settings.theme].title} ${
 				collapsed === true || collapsed === undefined ? "collapsed" : ""
 			}">
                                 <div class="title-text">${name}</div>
                                 <div class="tt-options"></div>
                                 <i class="tt-title-icon fas fa-caret-down"></i></div>
-                            <div class="toggle-content___2PGBT tt-content"></div>
+                            <div class="toggle-content___3YEYV tt-content"></div>
                         </div>
                     </div>
                 </div>
@@ -1908,6 +1942,14 @@ const navbar = {
 			return div;
 		}
 	},
+	newAreasLink: function (attributes = {}) {
+		let exampleAreasLink = doc.findAll("div#sidebarroot div[id*='nav-'][class*='area-desktop_']")[9].cloneNode(true);
+		if (attributes.id) exampleAreasLink.id = attributes.id;
+		if (attributes.href) exampleAreasLink.find("a[href]").href = attributes.href;
+		if (attributes.svgHTML) exampleAreasLink.find("svg").outerHTML = attributes.svgHTML;
+		if (attributes.linkName) exampleAreasLink.find("span[class*='linkName_']").innerText = attributes.linkName;
+		return exampleAreasLink;
+	},
 };
 
 const content = {
@@ -1946,7 +1988,7 @@ const content = {
 			if (attr.header_only) containerClasses.push("no-content");
 			if (attr.all_rounded) containerClasses.push("all-rounded");
 
-			if (collapsed === true || collapsed === undefined) {
+			if (attr.header_only || collapsed === true || collapsed === undefined) {
 				containerClasses.push("collapsed");
 
 				if (attr.all_rounded !== false && !attr.header_only) containerClasses.push("all-rounded");
@@ -2182,6 +2224,10 @@ function usingFirefox() {
 
 function usingYandex() {
 	return navigator.userAgent.includes("YaBrowser");
+}
+
+function isDarkMode() {
+	return hasClass(doc.body, "dark-mode");
 }
 
 function getSearchParameters() {
@@ -3160,6 +3206,12 @@ function cacheEstimate(userId, timestamp, estimate, lastAction) {
 	});
 }
 
+function formatDateObject(givenDate) {
+	let formattedDate = formatDate([givenDate.getDate(), givenDate.getMonth() + 1, givenDate.getFullYear()], settings.format.date);
+	let formattedTime = formatTime([givenDate.getHours(), givenDate.getMinutes(), givenDate.getSeconds()], settings.format.time);
+	return { formattedDate, formattedTime };
+}
+
 function fetchApi_v2(
 	location,
 	options = {
@@ -3171,7 +3223,7 @@ function fetchApi_v2(
 			const URLs = {
 				torn: "https://api.torn.com/",
 				yata__v1: "https://yata.yt/api/v1/",
-				tornstats: "https://www.tornstats.com/",
+				tornstats: "https://beta.tornstats.com/api/v1/",
 				// 'tornstats': 'https://www.torn-proxy.com/tornstats/',
 				torntools: "https://torntools.gregork.com/",
 				nukefamily: "https://www.nukefamily.org/",
@@ -3189,14 +3241,20 @@ function fetchApi_v2(
 			const selections = options.selections || "";
 			const apiKey = api_key;
 
+			if (location === "torn") options.comment = "TornTools";
+
 			let full_url;
 			if (location !== "torn" && location !== "tornstats") {
 				full_url = `${base}${section || ""}`;
 			} else if (apiKey) {
-				full_url = `${base}${section}${objectid}${selections ? "selections=" + selections : ""}${location !== "yata" ? `&key=${apiKey}` : ""}`;
-				for (let param of ["action", "target", "from"]) {
-					if (options[param] === undefined) continue;
-					full_url += `&${param}=${options[param]}`;
+				if (location === "tornstats") {
+					full_url = `${base}${apiKey}/${options.action}`;
+				} else {
+					full_url = `${base}${section}${objectid}${selections ? "selections=" + selections : ""}${location !== "yata" ? `&key=${apiKey}` : ""}`;
+					for (let param of ["action", "target", "from", "comment"]) {
+						if (options[param] === undefined) continue;
+						full_url += `&${param}=${options[param]}`;
+					}
 				}
 			} else {
 				console.log("NO API KEY IS SET. ABORTING FETCH.");
@@ -3227,6 +3285,15 @@ function fetchApi_v2(
 						} else {
 							result.error = "Unknown error";
 						}
+					}
+
+					if ((location === "torn" && !result) || !Object.keys(result).length) {
+						result = {
+							error: {
+								error: "API returning unexpected results, assuming it's down",
+								code: 9,
+							},
+						};
 					}
 
 					logFetch(ogLocation, options);

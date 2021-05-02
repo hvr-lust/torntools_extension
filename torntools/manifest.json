@@ -1,7 +1,7 @@
 {
 	"manifest_version": 2,
 	"name": "Torn Tools",
-	"version": "5.5",
+	"version": "5.8",
 	"description": "Tools for Torn users.",
 	"icons": {
 		"128": "images/icon128.png"
@@ -22,11 +22,11 @@
 		"background",
 		"https://api.torn.com/*",
 		"https://yata.yt/*",
-		"https://www.tornstats.com/*",
+		"https://beta.tornstats.com/*",
 		"https://torntools.gregork.com/*"
 	],
 	"optional_permissions": ["https://www.nukefamily.org/"],
-	"web_accessible_resources": ["images/*", "views/*", "scripts/*"],
+	"web_accessible_resources": ["audio/notification*", "images/*", "views/*", "scripts/*"],
 	"options_ui": {
 		"page": "views/settings/settings.html",
 		"open_in_tab": true
@@ -215,6 +215,22 @@
 			"run_at": "document_end"
 		},
 		{
+			"matches": ["https://www.torn.com/loader.php?sid=attack*"],
+			"css": ["scripts/content/loader/ttAttackLoader.css"],
+			"js": ["scripts/content/loader/ttAttackLoader.js"],
+			"run_at": "document_end"
+		},
+		{
+			"matches": ["https://www.torn.com/loader.php?sid=view*", "https://www.torn.com/loader.php?sid=rouletteStatistics"],
+			"js": ["scripts/content/loader/ttCasinoStatistics.js"],
+			"run_at": "document_end"
+		},
+		{
+			"matches": ["https://www.torn.com/bookies.php*"],
+			"js": ["scripts/content/loader/ttCasinoStatistics.js"],
+			"run_at": "document_end"
+		},
+		{
 			"matches": ["https://www.torn.com/loader.php?sid=highlow*"],
 			"css": ["scripts/content/casino/ttCasino.css"],
 			"js": ["scripts/content/casino/ttHiLo.js"],
@@ -281,7 +297,7 @@
 			"run_at": "document_end"
 		},
 		{
-			"matches": ["https://www.torn.com/stockexchange.php*"],
+			"matches": ["https://www.torn.com/page.php?sid=stocks*"],
 			"css": ["scripts/content/stockexchange/ttStockexchange.css"],
 			"js": ["scripts/content/stockexchange/ttStockexchange.js"],
 			"run_at": "document_end"
@@ -302,6 +318,12 @@
 			"matches": ["https://www.torn.com/war.php?step=chainreport*"],
 			"css": ["scripts/content/faction/ttFaction.css"],
 			"js": ["scripts/content/faction/ttChainReport.js"],
+			"run_at": "document_end"
+		},
+		{
+			"matches": ["https://www.torn.com/war.php?step=warreport*"],
+			"css": ["scripts/content/faction/ttFaction.css"],
+			"js": ["scripts/content/faction/ttWarReport.js"],
 			"run_at": "document_end"
 		},
 		{

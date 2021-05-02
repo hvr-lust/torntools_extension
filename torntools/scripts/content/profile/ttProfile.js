@@ -43,6 +43,7 @@ const key_dict = {
 		tracerammoused: "Attacks: Ammo: Tracer",
 		specialammoused: "Attacks: Ammo: Special Total",
 		hollowammoused: "Attacks: Ammo: Hollow Point",
+		elo: "Attacks: Elo rating",
 	},
 	bounties: {
 		bountiesplaced: "Bounties: Placed",
@@ -126,6 +127,7 @@ const key_dict = {
 	},
 	revives: {
 		revives: "Revives: Given",
+		reviveskill: "Revives: Skill",
 		revivesreceived: "Revives: Received",
 	},
 	travel: {
@@ -192,6 +194,7 @@ const key_dict = {
 		virusescoded: "Viruses Coded",
 	},
 };
+const npcIds = [4, 15, 17, 19, 20];
 let userId;
 
 requireDatabase().then(() => {
@@ -205,10 +208,6 @@ requireDatabase().then(() => {
 			showId();
 		}
 
-		if (settings.pages.profile.friendly_warning) {
-			displayAlly(user_faction, allies);
-		}
-
 		if (settings.pages.profile.loot_times) {
 			displayLootLevel(loot_times);
 		}
@@ -218,16 +217,26 @@ requireDatabase().then(() => {
 		}
 		displayCreator();
 
+		// Age to Words
+		ageToWords();
+
 		if (shouldDisable()) return;
 
 		// noinspection EqualityComparisonWithCoercionJS
 		if (userId == userdata.player_id) return;
 
+		if (settings.pages.profile.friendly_warning) {
+			displayAlly(user_faction, allies);
+		}
+
 		// Profile notes
 		if (settings.pages.profile.notes) showProfileNotes();
 
+		if (Object.keys(users_alias).length) showAlias();
+
 		// Profile stats
 		let info_container = content.newContainer("User Info", { next_element_heading: "Medals", id: "tt-target-info" });
+		if (npcIds.includes(parseInt(userId))) doc.find(".profile-wrapper.m-top10:not(.medals-wrapper)").insertAdjacentElement("beforeBegin", info_container);
 
 		let section_profile_stats = doc.new({ type: "div", class: "tt-section", attributes: { name: "profile-stats" } });
 		let profile_stats_div = doc.new({ type: "div", class: `profile-stats ${mobile ? "tt-mobile" : ""}` });
@@ -355,8 +364,10 @@ requireDatabase().then(() => {
 			await showSpyInfo();
 		}
 
-		// Age to Words
-		ageToWords();
+		let observer = new MutationObserver(() => {
+			if (!doc.find("div.profile-wrapper div.profile-buttons  span.tt-title-message")) displayProfileStats();
+		});
+		observer.observe(doc.find("div.profile-wrapper div.profile-buttons"), { childList: true, subtree: true });
 	});
 });
 
@@ -593,8 +604,10 @@ async function displayProfileStats() {
 	col_other.appendChild(header_other);
 	table.appendChild(col_chosen);
 	table.appendChild(col_other);
-	profile_stats.appendChild(showExtra);
-	profile_stats.appendChild(table);
+	if (!doc.find("div#tt-target-info div[name='profile-stats'] div.tt-stats-table")) {
+		profile_stats.appendChild(showExtra);
+		profile_stats.appendChild(table);
+	}
 
 	showExtra.addEventListener("click", () => {
 		if (col_chosen.classList.contains("active")) {
@@ -685,12 +698,14 @@ async function displayProfileStats() {
 	let footer_div = doc.new({ type: "div", class: "tt-footer" });
 	let footer_text = doc.new({ type: "div", text: "Automatically load info" });
 	let footer_input = doc.new({ type: "input", attributes: { type: "checkbox" } });
-	footer_div.appendChild(footer_text);
-	footer_div.appendChild(footer_input);
-	doc.find("#tt-target-info .content .tt-section[name='profile-stats']").insertBefore(
-		footer_div,
-		doc.find("#tt-target-info .content .profile-stats").nextElementSibling
-	);
+	if (!doc.find("div#tt-target-info div.tt-footer")) {
+		footer_div.appendChild(footer_text);
+		footer_div.appendChild(footer_input);
+		doc.find("#tt-target-info .content .tt-section[name='profile-stats']").insertBefore(
+			footer_div,
+			doc.find("#tt-target-info .content .profile-stats").nextElementSibling
+		);
+	}
 
 	if (filters.profile_stats.auto_fetch) {
 		footer_input.checked = true;
@@ -749,15 +764,13 @@ async function showSpyInfo() {
 		doc.find("#tt-target-info .content").appendChild(spySection);
 	}
 
-	if (cache && cache.spyReport[userId]) {
+	if (cache && cache.spyReport[userId] && !npcIds.includes(parseInt(userId))) {
 		result = cache.spyReport[userId].data;
-	} else {
+	} else if (!npcIds.includes(parseInt(userId))) {
 		loadingPlaceholder(spySection, true);
 		result = await new Promise((resolve) => {
-			fetch(`https://www.tornstats.com/api.php?key=${api_key}&action=spy&target=${userId}`).then(async (response) => {
-				let data = await response.json();
-
-				return resolve(handleTornStatsData(data));
+			fetchApi_v2("tornstats", { action: `spy/${userId}` }).then(async (response) => {
+				return resolve(handleTornStatsData(response));
 			});
 		});
 
@@ -777,10 +790,17 @@ async function showSpyInfo() {
 		loadingPlaceholder(spySection, false);
 	}
 
-	console.log("Spy Information", result.spyreport);
+	if (!npcIds.includes(parseInt(userId))) {
+		console.log("Spy Information", result.spyreport ? result.spyreport : "None");
+	} else {
+		console.log("Spy Information", "NPC");
+		result = {};
+	}
 
 	if (result.error) {
 		spySection.appendChild(doc.new({ type: "div", class: "tt-spy-info tt-error-message", text: result.error }));
+	} else if (npcIds.includes(parseInt(userId))) {
+		spySection.appendChild(doc.new({ type: "div", class: "tt-spy-info", text: "NPCs have no spies" }));
 	} else if (!result.spyreport.status) {
 		spySection.appendChild(doc.new({ type: "div", class: "tt-spy-info", text: result.spyreport.message }));
 	} else {
@@ -927,37 +947,60 @@ function showId() {
 
 function displayLootLevel(loot_times) {
 	console.log(loot_times);
-	let profile_id = doc.find(`.profile-container .info-table > li .user-info-value`).innerText.split(" [")[1].replace("]", "");
+	let profile_id = getUserId();
 
 	if (profile_id in loot_times) {
-		let current_time = parseInt((new Date().getTime() / 1000).toFixed(0));
-		let next_level = loot_times[profile_id].levels.next;
-		let next_loot_time = loot_times[profile_id].timings[next_level].ts;
-		let time_left;
-
-		if (next_loot_time - current_time <= 60) {
-			// New info hasn't been fetched yet
-			next_level = next_level + 1 > 5 ? 1 : next_level + 1;
-			next_loot_time = loot_times[profile_id].timings[next_level].ts;
+		let npcID = profile_id;
+		let npcData = loot_times[npcID];
+		let npcStatus;
+		let npcInHosp = false;
+		if (npcData.hospout * 1000 > Date.now()) npcInHosp = true;
+		let npcNextLevelIn, maxLevel;
+		if (npcInHosp) {
+			npcNextLevelIn = doc.new({
+				type: "span",
+				class: "tt-loot-time",
+				text: "Next level in: " + timeUntil(npcData.hospout * 1000 - Date.now()),
+				attributes: {
+					seconds: npcData.hospout * 1000 - Date.now(),
+				},
+			});
+		} else {
+			for (let lootLevel in npcData.timings) {
+				let nextLvlTime = npcData.timings[lootLevel].ts * 1000 - Date.now();
+				if (nextLvlTime > 0) {
+					npcNextLevelIn = doc.new({
+						type: "span",
+						class: "tt-loot-time",
+						text: "Next level in: " + timeUntil(nextLvlTime),
+						attributes: {
+							seconds: nextLvlTime,
+						},
+					});
+					break;
+				} else if (lootLevel !== 5 && nextLvlTime < 0) {
+					continue;
+				} else if (lootLevel === 5 && nextLvlTime < 0) {
+					maxLevel = true;
+					npcNextLevelIn = doc.new({
+						type: "span",
+						class: "tt-loot-time",
+						text: "Next level in: Max Level Reached",
+					});
+				}
+			}
 		}
-		time_left = timeUntil((next_loot_time - current_time) * 1000);
 
-		const maxLevel = time_left === -1;
-		let span = doc.new("span");
-		span.setClass("tt-loot-time");
-		span.innerText = `Next loot level in: ${maxLevel ? "max level reached" : time_left}`;
-		span.setAttribute("seconds", next_loot_time - current_time);
-
-		doc.find(".profile-wrapper .profile-status .description .sub-desc").appendChild(span);
+		doc.find(".profile-wrapper .profile-status .description .sub-desc").appendChild(npcNextLevelIn);
 
 		// Time decrease
 		if (!maxLevel) {
 			setInterval(() => {
-				let seconds = parseInt(span.getAttribute("seconds"));
-				let time_left = timeUntil((seconds - 1) * 1000);
+				let seconds = parseInt(npcNextLevelIn.getAttribute("seconds"));
+				let timeLeft = timeUntil(seconds - 1000);
 
-				span.innerText = `Next loot level in: ${time_left}`;
-				span.setAttribute("seconds", seconds - 1);
+				npcNextLevelIn.innerText = `Next level in: ${timeLeft}`;
+				npcNextLevelIn.setAttribute("seconds", seconds - 1000);
 			}, 1000);
 		}
 	}
@@ -975,10 +1018,8 @@ function addStatusIndicator() {
 	if (!mobile) icon_span.style.marginTop = "1px";
 	let text_span = doc.new({
 		type: "span",
+		class: "tt-profile-title",
 		text: doc.find("#skip-to-content").innerText,
-		attributes: {
-			style: mobile ? "font-size: 17px; color: #333" : "font-size: 22px; color: #333",
-		},
 	});
 
 	doc.find("#skip-to-content").innerText = "";
@@ -1132,12 +1173,14 @@ function getTraveling() {
 function handleTornStatsData(data) {
 	let response = {};
 
-	if (!data.error) {
+	if (data.spy.status) {
 		response.spyreport = { ...data.spy };
 	} else {
-		response.error = data.error.includes("User not found")
-			? "Can't display stat spies because no TornStats account was found. Please register an account @ www.tornstats.com"
-			: data.error;
+		if (data.spy.message.includes("User not found")) {
+			response.error = "Can't display stat spies because no TornStats account was found. Please register an account @ www.tornstats.com";
+		} else {
+			response.error = data.spy.message;
+		}
 	}
 
 	return response;
@@ -1156,19 +1199,20 @@ function saveProfileStats() {
 }
 
 function showProfileNotes() {
+	let userId = getUserId();
 	const textbox = doc.new({ type: "textarea", class: "tt-profile-notes-textarea", attributes: { maxLength: 1024 } });
 
 	const profile = profile_notes.profiles[userId];
 	textbox.style.height = profile ? profile.height : "17px";
 	textbox.value = profile ? profile.notes : "";
 
-	const container = content
-		.newContainer("Profile Notes", {
-			next_element_heading: "Medals",
-			id: "tt-target-notes",
-			collapseId: 1,
-		})
-		.find(".content");
+	const containerBox = content.newContainer("Profile Notes", {
+		next_element_heading: "Medals",
+		id: "tt-target-notes",
+		collapseId: 1,
+	});
+	if (npcIds.includes(parseInt(userId))) doc.find(".profile-wrapper.m-top10:not(.medals-wrapper)").insertAdjacentElement("beforeBegin", containerBox);
+	const container = containerBox.find(".content");
 	container.appendChild(
 		doc.new({
 			type: "div",
@@ -1268,13 +1312,21 @@ function disableAllyAttack() {
 			doc.new({
 				type: "span",
 				class: "tt-title-message",
-				text:
-					"Attacks on allies are disabled. Please enable it in TornTools Settings if you want so.",
+				text: "Attacks on allies are disabled. Please enable it in TornTools Settings if you want so.",
 				attributes: {
 					color: "warning",
 					style: "padding: 9px 10px 10px 10px; font-size: 13px;",
 				},
 			})
 		);
+	}
+}
+
+function showAlias() {
+	if (users_alias[getUserId()]) {
+		let clone = doc.findAll(".basic-info ul.info-table > *")[2].cloneNode(true);
+		clone.find(".user-information-section .bold").innerText = "Alias";
+		clone.find(".user-info-value span").innerText = users_alias[getUserId()];
+		doc.find(".basic-info ul.info-table > *").insertAdjacentElement("afterEnd", clone);
 	}
 }

@@ -1,8 +1,100 @@
 export default {
-	"v5.5 - xxxxxx, xxth. 2021": {
+	"v5.9 - xxxx, xxth. 2021": {
+		Features: [
+			"Filter faction members by position. - Sashank999",
+			"Battle Stat on Attack Page. - Sashank999",
+			"Aliases for users in Chatboxes and Userlists. - Sashank999",
+			"Win Percentage on Racing Upgrades. - Sashank999",
+			"Faction filter in Abroad. - Sashank999",
+			"Highlight properties if upkeep is due. - Sashank999",
+			"Display NPCs Loot info on Sidebar. - Sashank999",
+		],
+		Fixes: [
+			"Solve duplicate items on the map being ignored. - DKK",
+			"Fix showing hidden portfolio stocks. - Sashank999",
+			"Completed Education Courses not dimming. - Sashank999",
+			"Improve city finds alignment on Mobile. - Sashank999",
+			"Don't warn when education course and bank investment are completed during travel. - Sashank999",
+			"Fix travel count not being correct. - Sashank999",
+			"Chat highlight not working. - Sashank999",
+			"'fill max' not appearing on mobile. - Sashank999",
+			"Warn to check user faction chat when chain is near to bonus hit. - Sashank999",
+			"Add numbers to faction member list. - Sashank999",
+			"TT Settings in Dark Mode. - Sashank999",
+			"Racing upgrades not appearing. - DKK",
+			"Fix hospital filter being broken on tablet mode. - DKK",
+			"Filters on Stocks 3.0. - Sashank999",
+			"Fix Faction Enhancements on mobile. - Sashank999",
+			"All items filters not working abroad. - Sashank999",
+			"Hide userinfo rows on the faction filter. - DKK",
+		],
+		Changes: [
+			"Dark Mode for TornTools. - Sashank999",
+			"Show travel table while racing. - Sashank999",
+			"Show faction filter always when on Jail page. - Sashank999",
+		],
+	},
+	"v5.8 - March, 25th. 2021": {
+		Features: [
+			"Add Revives Skill to profile stat comparison table. - Sashank999",
+			"Export faction upgrade challenge contributions as CSV. - Sashank999",
+			"Add an arrow for folding Faction Description. - Sashank999",
+			"Show warning when taking Xanax while the user is already at 1000E. - Sashank999",
+			"Add setting to hide some portfolio and stock blocks. - Sashank999",
+			"Add Hospital filter to show only revive-enabled players. - Sashank999",
+			"Show net total on casino statistics. - Sashank999",
+			"Add Search in TT Preferences page. - Sashank999",
+			"Warning when user if about to fly but education or bank investment or both would timeout before return. - Sashank999",
+			"Show a timer between posts in trade chat. - Sashank999",
+		],
+		Fixes: ["Battle stat disappeared from profile when sending user money. - Sashank999", "Fix HighLow helper not working. - Sashank999"],
+		Changes: ["Add setting for 'Show flight times before flying'. - Sashank999", "Update to new beta TS API. - Sashank999"],
+	},
+	"v5.7 - February, 11th. 2021": {
+		Features: [
+			"Add option to export War Report as CSV. - Sashank999",
+			"Show end time of Wars on faction pages. - Sashank999",
+			"Show employee effectiveness in red if has negatives in effectiveness. - Sashank999",
+			"Show total price to buy an item in bazaar. - Sashank999",
+		],
+		Fixes: [
+			"Don't show the attack warning on attack logs. - Sashank999",
+			"Fix achievements section not showing. - Sashank999",
+			"Show a warning when you try to train while stacking. - Sashank999",
+			"Fix an interaction between chrome, torn tools, the faction page, that would cause chrome to suggest addresses in the chat box. - WizardRubic",
+			"Fix 'fill max' button not working in bazaar. - Sashank999",
+		],
+		Changes: [
+			"Only highlight chain timers over a configurable amount. - Sashank999",
+			"Add 'I'm Chaining' button to stop warning for 30 minutes on Attack Page. - Sashank999",
+		],
+	},
+	"v5.6.1 - January, 29th. 2021": {
+		Fixes: [
+			"Fix notes showing in the wrong location. - DKK",
+			"Fix mission hints not showing. - DKK",
+			"Fix Achievements Section not closing properly. - Sashank999",
+			"Add tt_itemprice & tt_itemid to URL not working in bazaar when right clicked. - Sashank999",
+		],
+	},
+	"v5.6 - January, 27th. 2021": {
+		Features: [
+			"Disable gym highlight. - Sashank999",
+			"Show energy gains from cans. - Sashank999",
+			"Show a warning when you try to attack while stacking. - Sashank999",
+			"Highlight chain timer when it's under a minute. - Sashank999",
+			"Show happy gains from candy. - Sashank999",
+			"Show nerve gains from alcohol. - Sashank999",
+			"Show education course finish time. - Sashank999",
+			"Show investment finish time. - Sashank999",
+		],
+		Fixes: ["Fix full faction description not working. - Sashank999"],
+		Changes: ["Update Love Juice information to reflect the new change. - DKK", "Add ELO stat to stat list. - DKK"],
+	},
+	"v5.5 - January, 19th. 2021": {
 		Features: ["Show missing flowers and plushies in the inventory. - Sashank999", "Disable some casino games. - Sashank999"],
 		Fixes: ["Use the new Torn classes. - Sashank999", "Solve some problems regarding the new class names. - DKK"],
-		Changes: ["Add ISO date formatting. - DKK", "Switch to new YATA domain. - DKK"],
+		Changes: ["Add ISO date formatting. - DKK", "Switch to new YATA domain. - DKK", "Update company specials. - DKK"],
 	},
 	"v5.4 - January, 12th. 2021": {
 		Features: [
