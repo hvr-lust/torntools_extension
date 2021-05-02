@@ -100,8 +100,6 @@ requireDatabase().then(() => {
 		let highlights = {};
 
 		if (doc.find(".chat-box-content_2C5UJ .overview_1MoPG .message_oP8oM")) {
-			manipulateChat(highlights);
-
 			if (settings.pages.global.find_chat) {
 				addPeopleBoxFilter();
 			}
@@ -113,7 +111,6 @@ requireDatabase().then(() => {
 				return;
 			}
 
-			manipulateChat(highlights);
 			if (settings.pages.global.find_chat) {
 				addPeopleBoxFilter();
 			}
