@@ -1,27 +1,23 @@
 requireDatabase().then(() => {
 	addXHRListener((event) => {
-		const { page, uri, xhr, json } = event.detail;
+		const { page, xhr } = event.detail;
 
 		const params = new URLSearchParams(xhr.requestBody);
 		const step = params.get("step");
 
-		if (page != "forums") return;
+		if (page !== "forums") return;
 
-		if (step == "forums") {
+		if (step === "forums") {
 			hideForumsThreads();
 		}
 
-		if (step == "threads") {
+		if (step === "threads") {
 			hideForumsPosts();
 		}
 	});
 
 	hideForumsThreads();
 	hideForumsPosts();
-
-	let observer = new MutationObserver(bniWarning);
-	observer.observe(doc.find("div#forums-page-wrap"), { childList: true });
-	bniWarning();
 });
 
 function hideForumsThreads() {
@@ -53,7 +49,7 @@ function hideForumsThreads() {
 					thread.classList.remove("tt-forums-hide-show");
 				}
 
-				if (countHiddenThread > 0 && (!settings.pages.forums.hide_threads[userId] || i == threads.length - 1)) {
+				if (countHiddenThread > 0 && (!settings.pages.forums.hide_threads[userId] || i === threads.length - 1)) {
 					let hiddenDiv = doc.new({
 						type: "li",
 						class: "tt-forums-hidden",
@@ -126,7 +122,7 @@ function hideForumsPosts() {
 					post.classList.remove("tt-forums-hide-show");
 				}
 
-				if (countHiddenPost > 0 && (!settings.pages.forums.hide_posts[userId] || i == posts.length - 1)) {
+				if (countHiddenPost > 0 && (!settings.pages.forums.hide_posts[userId] || i === posts.length - 1)) {
 					let hiddenDiv = doc.new({
 						type: "li",
 						class: "tt-forums-hidden",
@@ -154,6 +150,7 @@ function hideForumsPosts() {
 					type: "li",
 					class: "tt-forums-button form-button",
 				});
+				// noinspection JSUnresolvedVariable,JSUnresolvedFunction
 				button.appendChild(
 					doc.new({
 						type: "i",
@@ -197,18 +194,18 @@ $$$TEXT_CONTENT$$$\`\`\`$$$URLS$$$\nSource: https://www.torn.com/forums.php#/p=t
 					}
 
 					//Replace emoticons
-					let emoticonRegex = /\[img\].*?emotions\/(\w+).*?\[\/img\]/gs;
+					let emoticonRegex = /\[img].*?emotions\/(\w+).*?\[\/img]/gs;
 					postContent = postContent.replace(emoticonRegex, ":$1:");
 					quotesContent = quotesContent.replace(emoticonRegex, ":$1:");
 
 					//Remove images, tries to match [url] tags with the same url as the image and removes those as well
-					let imageRegex = /\[url\=(.*?)\]\[img(?:\s?\w*\=[^\]]*)*\]\1\[\/img\]\[\/url\]|\[img(?:\s?\w*\=[^\]]*)*\].*?\[\/img\]/gs;
+					let imageRegex = /\[url=(.*?)]\[img(?:\s?\w*=[^\]]*)*]\1\[\/img]\[\/url]|\[img(?:\s?\w*=[^\]]*)*].*?\[\/img]/gs;
 					postContent = postContent.replace(imageRegex, "[img]");
 					quotesContent = quotesContent.replace(imageRegex, "[img]");
 
 					//Replace urls
 					let urls = [];
-					let urlRegex = /\[url\=(.*?)\](.*?)\[\/url\]/gs;
+					let urlRegex = /\[url=(.*?)](.*?)\[\/url]/gs;
 					let urlCallback = (match, url, content) => {
 						urls.push(url);
 						return `[${content}][${urls.length}]`;
@@ -219,9 +216,9 @@ $$$TEXT_CONTENT$$$\`\`\`$$$URLS$$$\nSource: https://www.torn.com/forums.php#/p=t
 					text = text.replace("$$$URLS$$$", urls.map((url, idx) => `[${idx + 1}]: ${url}`).join("\n"));
 
 					//Remove bbcode
-					let bbcodeRegex = /\[(\w+)(?:\s?\w*\=[^\]]*)*\](.*?)\[\/\1\]/gs;
-					while (postContent != (postContent = postContent.replace(bbcodeRegex, "$2"))) {}
-					while (quotesContent != (quotesContent = quotesContent.replace(bbcodeRegex, "$2"))) {}
+					let bbcodeRegex = /\[(\w+)(?:\s?\w*=[^\]]*)*](.*?)\[\/\1]/gs;
+					while (postContent !== (postContent = postContent.replace(bbcodeRegex, "$2"))) {}
+					while (quotesContent !== (quotesContent = quotesContent.replace(bbcodeRegex, "$2"))) {}
 
 					//Remove 3+ newlines
 					let newlineRegex = /\n{3,}/gs;
@@ -308,22 +305,4 @@ $$$TEXT_CONTENT$$$\`\`\`$$$URLS$$$\nSource: https://www.torn.com/forums.php#/p=t
 			}
 		});
 	});
-}
-
-function bniWarning() {
-	if (
-		settings.pages.forums.show_bug_warning &&
-		window.location.hash.includes("f=19") &&
-		doc.findAll(".title.title-black.t-hide").length === 1 &&
-		doc.title === "Bugs & Issues | TORN"
-	) {
-		let ttBugWarning = doc.new({
-			type: "div",
-			id: "ttBugWarning",
-			html:
-				"<br>Please try disabling TornTools to make sure if the issue persists.&nbsp;Contact <a href='https://www.torn.com/profiles.php?XID=2087524' style='color:#f2f2f2'>Mephiles [2087524]</a> in case of issues caused by TornTools.<br><br>",
-			class: "title-green tt-bug-warning",
-		});
-		doc.find("ul.title.title-black").insertAdjacentElement("afterEnd", ttBugWarning);
-	}
 }

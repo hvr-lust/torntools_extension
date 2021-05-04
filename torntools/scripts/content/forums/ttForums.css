@@ -76,12 +76,3 @@
 	border-top: 1px solid #ccc;
 	margin: 5px -5px -5px;
 }
-
-.tt-bug-warning {
-	font-size: 16px !important;
-	height: 59px !important;
-	line-height: 16px !important;
-	color: #ffffff !important;
-	padding: 0 16px !important;
-	background: repeating-linear-gradient(90deg, #627e0d, #627e0d 2px, #6e8820 0, #6e8820 4px) !important;
-}
