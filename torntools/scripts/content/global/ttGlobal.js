@@ -14,15 +14,9 @@ requireDatabase().then(() => {
 		showToggleChat();
 	}
 
-	if (settings.developer) {
-		showCustomConsole();
-	}
-
 	aliasUsers();
 
 	requireNavbar().then(async () => {
-		let _flying = await isFlying();
-
 		// Mark Body with Mobile class
 		if (mobile) doc.find("body").classList.add("tt-mobile");
 
@@ -77,6 +71,7 @@ requireDatabase().then(() => {
 			}
 		}, 1000);
 
+		// noinspection JSUnresolvedVariable
 		if (userdata.faction.faction_id && settings.pages.global.highlight_chain_timer && settings.pages.global.highlight_chain_length >= 10)
 			chainTimerHighlight();
 
@@ -97,8 +92,6 @@ requireDatabase().then(() => {
 		if (shouldDisable()) return;
 
 		// Chat highlight
-		let highlights = {};
-
 		if (doc.find(".chat-box-content_2C5UJ .overview_1MoPG .message_oP8oM")) {
 			if (Object.keys(users_alias).length) aliasUsersChat();
 		}
@@ -113,6 +106,7 @@ requireDatabase().then(() => {
 
 		let chat_observer = new MutationObserver((mutationsList) => {
 			for (let mutation of mutationsList) {
+				// noinspection JSUnresolvedVariable
 				if (mutation.addedNodes[0] && mutation.addedNodes[0].classList && mutation.addedNodes[0].classList.contains("message_oP8oM")) {
 					let message = mutation.addedNodes[0];
 
@@ -137,7 +131,6 @@ function displayVaultBalance() {
 		money = vault.user.current_money;
 	}
 
-	// FIXME - Use right classes.
 	let elementHTML = `
     	<span class="bold">Vault:</span>
     	<span class="money-color">
@@ -145,7 +138,6 @@ function displayVaultBalance() {
 		</span>
     `;
 
-	// FIXME - Use right classes.
 	let el = doc.new({ type: "p", class: "tt-point-block", attributes: { tabindex: "1" }, html: elementHTML });
 
 	let info_cont = doc.find("h2=Information");
@@ -178,11 +170,11 @@ function showToggleChat() {
 	});
 
 	function setToggleChatPosition() {
-		var maxTop =
+		const maxTop =
 			Array.from(document.querySelectorAll("#chatRoot > div > div")).reduce((accumulator, currentValue) =>
 				Math.max(accumulator || 0, currentValue.style["top"].replace(/[^\d]/g, ""))
 			) || 0;
-		var iconBottom = (maxTop / 39 / 2 + 1) * 39;
+		const iconBottom = (maxTop / 39 / 2 + 1) * 39;
 
 		icon.style["bottom"] = `${iconBottom}px`;
 	}
@@ -229,14 +221,6 @@ function addReviveListener() {
 	doc.find("head").appendChild(script);
 }
 
-function showCustomConsole() {
-	const element = doc.new({ type: "div", id: "tt-console" });
-
-	ttConsole.parent = element;
-
-	doc.find("#mainContainer").insertBefore(element, doc.find("#mainContainer > .clear"));
-}
-
 function nukeReviveScript() {
 	// HTML - taken from Jox's script 'Central Hospital Revive Request'
 	const reviveButtonHTML = `
@@ -273,10 +257,13 @@ function nukeReviveScript() {
 	}
 
 	function callForRevive() {
+		// noinspection JSUnresolvedVariable
 		const playerID = userdata.player_id;
 		const playerName = userdata.name;
 		const isInHospital = !!doc.find("#sidebarroot [class*='status-icons_'] li[class*=icon15]");
+		// noinspection JSUnresolvedVariable
 		const faction = userdata.faction.faction_name;
+		// noinspection JSUnresolvedVariable,JSUnresolvedFunction
 		const appInfo = `TornTools v${chrome.runtime.getManifest().version}`;
 		let country = document.body.dataset.country;
 
@@ -289,7 +276,7 @@ function nukeReviveScript() {
 				break;
 			default:
 				country = country.replace(/-/g, " ");
-				country = capitalize(country, (everyWord = true));
+				country = capitalize(country, true);
 				break;
 		}
 
@@ -335,7 +322,7 @@ function chainBonusWatch() {
 							<span>Chain is approaching bonus hit ! Please check your faction chat !</span>
 						</div>
 					</div>`;
-					doc.body.insertAdjacentHTML("afterBegin", rawHTML);
+					doc.body.insertAdjacentHTML("afterbegin", rawHTML);
 				}
 			});
 			attackButton.addEventListener("mouseleave", () => {
@@ -346,11 +333,12 @@ function chainBonusWatch() {
 }
 
 function ttSettingsLink() {
+	// noinspection JSUnresolvedVariable,JSUnresolvedFunction
 	doc.find("div.areasWrapper [class*='toggle-content__']").appendChild(
 		navbar.newAreasLink({
 			id: "tt-nav-settings",
 			href: "/home.php#TornTools",
-			svgHTML: `<img src="${chrome.runtime.getURL("images/icongrey48.png")}" style="height: 21px;">`,
+			svgHTML: `<img src="${chrome.runtime.getURL("images/icongrey48.png")}" alt="icon" style="height: 21px;">`,
 			linkName: "TornTools Settings",
 		})
 	);
@@ -361,7 +349,7 @@ function aliasUsers() {
 		for (const userID of Object.keys(users_alias)) {
 			doc.findAll(`.m-hide a[href*='/profiles.php?XID=${userID}']`).forEach((userIdA) => {
 				userIdA.classList.add("tt-user-alias");
-				userIdA.insertAdjacentHTML("beforeEnd", `<div class='tt-alias'>${users_alias[userID]}</div>`);
+				userIdA.insertAdjacentHTML("beforeend", `<div class='tt-alias'>${users_alias[userID]}</div>`);
 			});
 		}
 	});
@@ -423,13 +411,13 @@ function showNpcLoot() {
 			npcNextLevelIn = doc.new({ type: "span", text: timeUntil(hospOutIn), attributes: { seconds: Math.floor(hospOutIn / 1000) } });
 		} else {
 			for (let lootLevel in npcData.timings) {
+				lootLevel = parseInt(lootLevel);
 				let nextLvlTime = npcData.timings[lootLevel].ts * 1000 - Date.now();
 				if (nextLvlTime > 0) {
 					npcLootLevel = doc.new({ type: "span", class: "loot", text: lootLevel - 1 });
 					npcNextLevelIn = doc.new({ type: "span", text: timeUntil(nextLvlTime), attributes: { seconds: Math.floor(nextLvlTime / 1000) } });
 					break;
 				} else if (lootLevel !== 5 && nextLvlTime < 0) {
-					continue;
 				} else if (lootLevel === 5 && nextLvlTime < 0) {
 					npcNextLevelIn = doc.new({ type: "span", text: "Max Level Reached" });
 				}
@@ -445,7 +433,7 @@ function showNpcLoot() {
 		npcContent.appendChild(npcDiv);
 	}
 	npcContent.id = "tt-loot";
-	doc.find("#sidebar > :first-child").insertAdjacentElement("afterEnd", npcLootDiv);
+	doc.find("#sidebar > :first-child").insertAdjacentElement("afterend", npcLootDiv);
 	setInterval(() => {
 		doc.findAll("div#tt-loot .tt-npc .tt-npc-information > :last-child").forEach((x) => {
 			if (!x.getAttribute("seconds")) return;
