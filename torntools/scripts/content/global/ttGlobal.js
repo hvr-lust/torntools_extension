@@ -100,9 +100,6 @@ requireDatabase().then(() => {
 		let highlights = {};
 
 		if (doc.find(".chat-box-content_2C5UJ .overview_1MoPG .message_oP8oM")) {
-			if (settings.pages.global.find_chat) {
-				addPeopleBoxFilter();
-			}
 			if (Object.keys(users_alias).length) aliasUsersChat();
 		}
 
@@ -111,9 +108,6 @@ requireDatabase().then(() => {
 				return;
 			}
 
-			if (settings.pages.global.find_chat) {
-				addPeopleBoxFilter();
-			}
 			if (Object.keys(users_alias).length) aliasUsersChat();
 		});
 
@@ -312,41 +306,6 @@ function nukeReviveScript() {
 		}).then(async (response) => {
 			console.log("response", response);
 		});
-	}
-}
-
-// Code for adding chat filter for People Box
-function addPeopleBoxFilter() {
-	if (doc.findAll("div[class*='chat-box-people_'] .tt-chat-filter").length === 0) {
-		let peopleBox = document.find("div[class*='chat-box-people_']");
-
-		peopleBox.nextElementSibling.classList.add("tt-modified");
-
-		let filter_wrap = doc.new({ type: "div", class: "tt-chat-filter" });
-		let filter_text = doc.new({ type: "div", text: "Find:" });
-		let filter_input = doc.new({ type: "input" });
-
-		filter_wrap.appendChild(filter_text);
-		filter_wrap.appendChild(filter_input);
-
-		peopleBox.find("div[class*='chat-box-content_']").appendChild(filter_wrap);
-
-		// Filtering process
-		filter_input.onkeyup = () => {
-			let keyword = filter_input.value.toLowerCase();
-
-			for (let player of peopleBox.findAll("li[class*='started-chat_']")) {
-				player.style.display = "block";
-
-				if (keyword && player.find(".bold").innerText.toLowerCase().indexOf(keyword) === -1) {
-					player.style.display = "none";
-				}
-			}
-
-			if (!keyword) {
-				peopleBox.find("div[class*='viewport_']").scrollTo(0, 0);
-			}
-		};
 	}
 }
 
