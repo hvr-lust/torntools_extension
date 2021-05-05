@@ -58,9 +58,10 @@ function warnEnergy() {
 		}).observe(doc.find("#mainContainer > .content-wrapper"), { childList: true, subtree: true });
 
 	function listen() {
-		if (!doc.find(".travel-home-content").style.display === "none") show();
+		if (doc.find(".travel-home-content").style.display !== "none") show();
 
 		new MutationObserver((mutations) => {
+			// noinspection JSUnresolvedVariable
 			if (mutations[0].target.style.display === "none") return;
 
 			show();
@@ -79,6 +80,7 @@ function warnEnergy() {
 		if (splitTime.includes("minutes")) minutes = parseInt(splitTime[splitTime.indexOf("minutes") - 1]);
 		if (splitTime.includes("hours")) hours = parseInt(splitTime[splitTime.indexOf("hours") - 1]);
 
+		// noinspection JSUnresolvedVariable
 		const fulltime = userdata.energy.fulltime;
 		const flytime = (hours * 60 + minutes) * 60;
 

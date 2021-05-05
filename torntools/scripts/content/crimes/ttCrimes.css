@@ -99,5 +99,6 @@ form[name="crimes"] img {
 }
 
 .specials-cont-wrap .specials-cont > li:not(.safe-crime) {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-only-safe-crimes, block);
 }

@@ -105,9 +105,10 @@ async function showTable() {
 }
 
 function showInvestmentOverTime() {
+	// noinspection JSUnresolvedVariable
 	let overDate = formatDateObject(new Date(new Date().setSeconds(userdata.city_bank.time_left)));
 	doc.find("p.m-clear").insertAdjacentHTML(
-		"afterEnd",
+		"afterend",
 		`<span>Investment will be completed on <b>${overDate.formattedDate} ${overDate.formattedTime}</b></span>`
 	);
 }

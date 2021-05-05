@@ -650,7 +650,8 @@ function addFilterToTable(list, title) {
 		.find(".content");
 
 	filter_container.innerHTML = `
-        <div class="filter-header">
+        <!--suppress XmlDuplicatedId -->
+<div class="filter-header">
             <div class="statistic" id="showing">Showing <span class="filter-count">X</span> of <span class="filter-total">Y</span> users</div>
         </div>
         <div class="filter-content ${mobile ? "tt-mobile" : ""}">

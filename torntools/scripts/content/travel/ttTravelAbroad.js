@@ -206,14 +206,6 @@ function addFilterToTable(list, title) {
 					</select>
 				</div>
 			</div>
-			<div class="filter-wrap" id="faction-filter">
-                <div class="filter-heading">Faction</div>
-                <div class="filter-multi-wrap ${mobile ? "tt-mobile" : ""}">
-                    <select name="faction" id="tt-faction-filter">
-						<option selected value="">none</option>
-					</select>
-                </div>
-			</div>
 			<div class='filter-wrap' id='special-filter'>
 				<div class='filter-heading'>Special</div>
 				<div class='filter-multi-wrap ${mobile ? "tt-mobile" : ""}'>

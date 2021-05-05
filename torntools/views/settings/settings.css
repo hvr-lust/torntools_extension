@@ -561,8 +561,7 @@ div#tt-black-search-overlay input#tt-search-input {
 
 div#tt-black-search-overlay i#tt-search-button {
 	margin-left: 10px;
-	border: #acea00 3px solid;
-	border-color: rgb(133, 133, 133);
+	border: 3px solid rgb(133, 133, 133);
 	color: #acea00;
 	background-color: white;
 	border-radius: 15px;
@@ -616,11 +615,10 @@ div#preferences > div:first-child {
 
 div#preferences i#tt-search-button {
 	display: inline;
-	border: black 2px solid;
 	width: 15px;
 	height: 14px;
 	padding: 2px;
-	border-color: rgb(133, 133, 133);
+	border: 2px solid rgb(133, 133, 133);
 }
 
 span#no-result {

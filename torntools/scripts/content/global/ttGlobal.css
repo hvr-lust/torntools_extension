@@ -170,6 +170,7 @@
 .tt-confirmation-popup {
 	width: 50%;
 	height: fit-content;
+	/*noinspection CssInvalidPropertyValue*/
 	height: -moz-fit-content;
 	max-height: 75%;
 	left: 25%;
@@ -287,10 +288,12 @@
 }
 
 .dark-mode .tt-nav-section .tt-content [class*="desktopLink_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	background-color: var(--default-bg-panel-color, #333);
 }
 
 .dark-mode .tt-nav-section .tt-content [class*="desktopLink_"]:hover {
+	/*noinspection CssUnresolvedCustomProperty*/
 	background-color: var(--default-bg-panel-active-color, #444);
 }
 
@@ -378,11 +381,13 @@
 }
 
 #pointsLevel {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-upgrade-button, block) !important;
 }
 
 .info-msg-cont.green,
 .info-msg-cont.green + hr {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-upgrade-info, block) !important;
 }
 
@@ -390,91 +395,113 @@
 .info-msg-cont + hr,
 .msg-info-wrap,
 .msg-info-wrap + hr {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-remove-info-boxes, block) !important;
 }
 
 .doctorn-widgets:not(:empty),
 .doctorn-widget:not(.doctorn-widget--animated) {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-doctorn) !important;
 }
 
 .overview_1MoPG .message_oP8oM * {
+	/*noinspection CssUnresolvedCustomProperty*/
 	font-size: var(--torntools-chat-font-size) !important;
 }
 
 .quit-job {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-leave-button, flex) !important;
 }
 
 #nav-home {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-area-home, block) !important;
 }
 
 #nav-items {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-area-items, block) !important;
 }
 
 #nav-city {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-area-city, block) !important;
 }
 
 #nav-job {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-area-job, block) !important;
 }
 
 #nav-gym {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-area-gym, block) !important;
 }
 
 #nav-properties {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-area-properties, block) !important;
 }
 
 #nav-education {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-area-education, block) !important;
 }
 
 #nav-crimes {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-area-crimes, block) !important;
 }
 
 #nav-missions {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-area-missions, block) !important;
 }
 
 #nav-newspaper {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-area-newspaper, block) !important;
 }
 
 #nav-jail {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-area-jail, block) !important;
 }
 
 #nav-hospital {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-area-hospital, block) !important;
 }
 
 #nav-casino {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-area-casino, block) !important;
 }
 
 #nav-forums {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-area-forums, block) !important;
 }
 
 #nav-hall_of_fame {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-area-hall_of_fame, block) !important;
 }
 
 #nav-my_faction {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-area-my_faction, block) !important;
 }
 
 #nav-recruit_citizens {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-area-recruit_citizens, block) !important;
 }
 
 #nav-competitions {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-area-competitions, block) !important;
 }
 
@@ -491,6 +518,7 @@ div[role="main"].tt-modified {
 .travel-agency-travelling .stage,
 .travel-agency-travelling .stage + hr,
 .travel-agency-travelling .popup-info {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-clean-flight-display) !important;
 }
 
@@ -624,6 +652,7 @@ div[role="main"].tt-modified {
 }
 
 #chatRoot {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-chat, block) !important;
 }
 
@@ -662,6 +691,7 @@ div[role="main"].tt-modified {
 	font-size: 11px;
 	padding-bottom: 2px;
 	width: -moz-available;
+	/*noinspection CssInvalidPropertyValue*/
 	width: -webkit-fill-available;
 }
 
@@ -708,322 +738,402 @@ div[role="main"].tt-modified {
 
 /* Torn icons */
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon1_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon1, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon2_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon2, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon3_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon3, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon4_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon4, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon5_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon5, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon6_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon6, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon7_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon7, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon8_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon8, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon9_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon9, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon10_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon10, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon11_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon11, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon12_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon12, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon13_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon13, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon14_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon14, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon15_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon15, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon16_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon16, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon17_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon17, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon18_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon18, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon19_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon19, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon20_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon20, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon21_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon21, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon22_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon22, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon23_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon23, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon24_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon24, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon25_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon25, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon26_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon26, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon27_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon27, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon28_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon28, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon29_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon29, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon30_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon30, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon31_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon31, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon32_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon32, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon33_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon33, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon34_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon34, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon35_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon35, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon36_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon36, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon37_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon37, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon38_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon38, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon39_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon39, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon40_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon40, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon41_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon41, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon42_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon42, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon43_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon43, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon44_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon44, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon45_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon45, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon46_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon46, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon47_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon47, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon48_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon48, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon49_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon49, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon50_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon50, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon51_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon51, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon52_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon52, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon53_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon53, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon54_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon54, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon55_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon55, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon56_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon56, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon57_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon57, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon58_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon58, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon59_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon59, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon60_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon60, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon61_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon61, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon62_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon62, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon63_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon63, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon64_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon64, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon65_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon65, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon66_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon66, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon67_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon67, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon68_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon68, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon69_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon69, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon70_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon70, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon71_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon71, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon72_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon72, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon73_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon73, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon74_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon74, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon75_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon75, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon76_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon76, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon77_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon77, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon78_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon78, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon79_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon79, inline-block);
 }
 
 #sidebarroot ul[class*="status-icons_"] > li[class*="icon80_"] {
+	/*noinspection CssUnresolvedCustomProperty*/
 	display: var(--torntools-hide-icons-icon80, inline-block);
 }
 
@@ -1087,6 +1197,7 @@ div[role="main"].tt-modified {
 }
 
 .tt-upkeep > div {
+	/*noinspection CssUnresolvedCustomProperty*/
 	background-color: var(--sidebar-area-bg-available) !important;
 }
 
@@ -1141,6 +1252,7 @@ div#tt-loot a.tt-npc-name {
 	margin: 0 0 5px 10px;
 	font-weight: bold;
 	text-decoration: none;
+	/*noinspection CssUnresolvedCustomProperty*/
 	color: var(--default-blue-color, #74c0fc);
 }
 

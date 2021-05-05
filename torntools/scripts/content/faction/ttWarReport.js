@@ -18,7 +18,7 @@ function displayContainer() {
 		html: `
 			<i class="fa fa-table"></i>
 			<span class="text">CSV</span>
-			<a id="ttExportLink" />`,
+			<a id="ttExportLink"></a>`,
 	});
 	option.addEventListener("click", () => getTableAndExport(container));
 

@@ -1,3 +1,4 @@
+/*noinspection CssReplaceWithShorthandSafely*/
 .switch {
 	position: relative;
 	display: block;
@@ -74,6 +75,7 @@
 	opacity: 1;
 }
 
+/*noinspection CssReplaceWithShorthandSafely*/
 .switch-handle {
 	position: absolute;
 	top: 8px;
@@ -86,6 +88,7 @@
 	box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
 }
 
+/*noinspection CssReplaceWithShorthandSafely*/
 .switch-handle:before {
 	content: "";
 	position: absolute;

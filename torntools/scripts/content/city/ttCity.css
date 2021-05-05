@@ -106,11 +106,13 @@ Thanks, Mauk @DocTorn
 }
 
 #tt-city-items .items .item > span > div > a {
+	/*noinspection CssUnresolvedCustomProperty*/
 	color: var(--default-blue-color, #74c0fc);
 	text-decoration: none;
 }
 
 #tt-city-items .items .item > span > div > span {
+	/*noinspection CssUnresolvedCustomProperty*/
 	color: var(--default-green-color, #678c00);
 }
 

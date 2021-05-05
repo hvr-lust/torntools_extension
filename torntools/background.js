@@ -1103,7 +1103,7 @@ function updateStakeouts(oldStakeouts) {
 							oldStakeouts[user_id].info.last_action = stakeout_info.last_action;
 							oldStakeouts[user_id].info.username = stakeout_info.name;
 
-							await new Promise((resolve, reject) => {
+							await new Promise((resolve) => {
 								ttStorage.set({ stakeouts: oldStakeouts }, () => {
 									return resolve();
 								});

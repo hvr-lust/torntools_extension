@@ -4,9 +4,8 @@ console.log("TT - Loading global functions.");
  * Declare some variables.
  */
 
+// noinspection JSUnresolvedVariable
 chrome = typeof browser !== "undefined" ? browser : chrome;
-
-const ttConsole = new ttCustomConsole();
 
 const HIGHLIGHT_PLACEHOLDERS = {
 	$player: {
@@ -16,106 +15,6 @@ const HIGHLIGHT_PLACEHOLDERS = {
 };
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
-const DRUG_INFORMATION = {
-	cannabis: {
-		pros: ["Increased crime success rate", "+2-3 Nerve"],
-		cons: ["-20% Strength", "-25% Defense", "-35% Speed"],
-		cooldown: "60-90 minutes",
-		overdose: {
-			bars: ["-100% Energy & Nerve"],
-			hosp_time: "5 hours",
-			extra: "'Spaced Out' honor bar",
-		},
-	},
-	ecstasy: {
-		pros: ["Doubles Happy"],
-		cooldown: "3-4 hours",
-		overdose: {
-			bars: ["-100% Energy & Happy"],
-		},
-	},
-	ketamine: {
-		pros: ["+50% Defense"],
-		cons: ["-20% Strength & Speed"],
-		cooldown: "45-60 minutes",
-		overdose: {
-			bars: ["-100% Energy, Nerve & Happy"],
-			stats: "-20% Strength & Speed",
-			hosp_time: "16-17 hours",
-			extra: "24-27 hours of cooldown",
-		},
-	},
-	lsd: {
-		pros: ["+30% Strength", "+50% Defense", "+50 Energy", "+200-500 Happy", "+5 Nerve"],
-		cons: ["-30% Speed & Dexterity"],
-		cooldown: "6-8 hours",
-		overdose: {
-			bars: ["-100% Energy, Nerve", "-50% Happy"],
-			stats: "-30% Speed & Dexterity",
-		},
-	},
-	opium: {
-		pros: ["Removes all hospital time (except Radiation Sickness) and replenishes life to 66.6%", "+50-100 Happy"],
-		cooldown: "3-4 hours",
-	},
-	pcp: {
-		pros: ["+20% Strength & Dexterity", "+250 Happy"],
-		cooldown: "4-7 hours",
-		overdose: {
-			bars: ["-100% Energy, Nerve & Happy"],
-			hosp_time: "27 hours",
-			stats: "-10x(player level) Speed (permanent)",
-		},
-	},
-	shrooms: {
-		pros: ["+500 Happy"],
-		cons: ["-20% All Battle Stats", "-25 Energy (caps at 0)"],
-		cooldown: "3-4 hours",
-		overdose: {
-			bars: ["-100% Energy, Nerve & Happy"],
-			hosp_time: "1h 40min",
-		},
-	},
-	speed: {
-		pros: ["+20% Speed", "+50 Happy"],
-		cons: ["-20% Dexterity"],
-		cooldown: "4-6 hours",
-		overdose: {
-			bars: ["-100% Energy, Nerve & Happy"],
-			stats: "-6x(player level) Strength & Defense (permanent)",
-			hosp_time: "7h 30min",
-		},
-	},
-	vicodin: {
-		pros: ["+25% All Battle Stats", "+75 Happy"],
-		cooldown: "4-6 hours",
-		overdose: {
-			bars: ["-150 Happy"],
-		},
-	},
-	xanax: {
-		pros: ["+250 Energy", "+75 Happy"],
-		cons: ["-35% All Battle Stats"],
-		cooldown: "6-8 hours",
-		overdose: {
-			bars: ["-100% Energy, Nerve & Happy"],
-			hosp_time: "3 days 12 hours",
-			extra: "24 hours of cooldown and increased addiction",
-		},
-	},
-	love_juice: {
-		pros: ["Cost of Attacking & Reviving reduced by 10 Energy", "+50% Speed", "+25% Dexterity"],
-		cons: ["Only works on Valentine's Day"],
-		cooldown: "5 hours",
-	},
-	felovax: {
-		pros: ["Use Felovax while in jail to instantly get transfered to hospital.", "You can then use Zylkene to get out of hospital instantly."],
-	},
-	zylkene: {
-		pros: ["Use Zylkene while in hospital to instantly get out.", "Use after Felovax (optional but the combination works well - Jail->Hospital->Okay)."],
-	},
-};
 
 const COMPANY_INFORMATION = {
 	"Adult Novelties": {
@@ -1712,8 +1611,6 @@ const FORMATTER_PERCENTAGE = new Intl.NumberFormat("en-US", {
 	maximumFractionDigits: 2,
 });
 
-const REGEX_COMBINING_SYMBOL = /([\0-\u02FF\u0370-\u1AAF\u1B00-\u1DBF\u1E00-\u20CF\u2100-\uD7FF\uE000-\uFE1F\uFE30-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])([\u0300-\u036F\u1AB0-\u1AFF\u1DC0-\u1DFF\u20D0-\u20FF\uFE20-\uFE2F]+)/g;
-
 let injectedXHR = false;
 let injectedFetch = false;
 
@@ -1767,6 +1664,7 @@ Document.prototype.new = function (newElement) {
 };
 
 Document.prototype.setClass = function (className) {
+	// noinspection JSUnresolvedFunction
 	return this.setAttribute("class", className);
 };
 Element.prototype.setClass = function (className) {
@@ -1811,37 +1709,6 @@ DOMTokenList.prototype.contains = function (className) {
  * Load some functions.
  */
 
-const infoBox = {
-	newRow: function (key, value, attr = {}) {
-		// process
-
-		let li = doc.new({ type: "li", id: attr.id ? attr.id : "", class: attr.last ? "last" : "" });
-		if (attr.heading) {
-			li.innerText = key;
-
-			li.classList.add("tt-box-section-heading");
-			li.classList.add("tt-title");
-			li.classList.add(THEME_CLASSES[DB.settings.theme].title);
-		} else {
-			let span_left = doc.new({ type: "span", class: "divider" });
-			let span_left_inner = doc.new({
-				type: "span",
-				text: key,
-				attributes: { style: "background-color: transparent;" },
-			});
-			let span_right = doc.new({ type: "span", class: "desc" });
-			let span_right_inner = doc.new({ type: "span", text: value, attributes: { style: "padding-left: 3px;" } });
-
-			span_left.appendChild(span_left_inner);
-			span_right.appendChild(span_right_inner);
-			li.appendChild(span_left);
-			li.appendChild(span_right);
-		}
-
-		return li;
-	},
-};
-
 const navbar = {
 	newSection: function (name, attribute = {}) {
 		let parent = doc.find("#sidebarroot");
@@ -1864,7 +1731,6 @@ const navbar = {
 				collapsed = filters.container_open.navbar[name];
 			}
 
-			// FIXME - Use right classes.
 			let sidebarBlock = doc.new({ type: "div", class: "sidebar-block___1Cqc2 tt-nav-section" });
 			sidebarBlock.innerHTML = `
                 <div class="content___kMC8x">
@@ -1906,6 +1772,7 @@ const navbar = {
 	newCell: function (text, attribute = {}) {
 		let sidebar = doc.find("#sidebarroot");
 
+		// noinspection JSUnresolvedVariable
 		if (!attribute.parent_element && attribute.parent_heading) {
 			attribute.parent_element = (function () {
 				for (let el of sidebar.findAll("h2")) {
@@ -1926,14 +1793,13 @@ const navbar = {
 		return newCellBlock;
 
 		function createNewCellBlock(text, attr) {
-			let div = doc.new({ type: "div", class: "area-desktop___2YU-q area-desktop___2N3Jp" }); // FIXME - Use right classes.
+			let div = doc.new({ type: "div", class: "area-desktop___2YU-q area-desktop___2N3Jp" });
 
-			// FIXME - Use right classes.
+			// noinspection JSUnresolvedVariable
 			div.innerHTML = `
                 <div class="area-row___34mEZ area-row___1VM_l tt-cell">
-                    <a class="desktopLink___2dcWC desktopLink___1p2Dr ${attr.class || ""}" ${attr.href ? `href='${attr.href}'` : ""} target="${
-				attr.link_target || ""
-			}">
+                    <!--suppress HtmlUnknownAttribute -->
+<a class="desktopLink___2dcWC desktopLink___1p2Dr ${attr.class || ""}" ${attr.href ? `href='${attr.href}'` : ""} target="${attr.link_target || ""}">
                         <span>${text}</span>
                     </a>
                 </div>
@@ -1972,8 +1838,10 @@ const content = {
 
 		if (attr.first) parent_element.insertBefore(new_div, parent_element.find(".content-title").nextElementSibling);
 		else if (attr.next_element) parent_element.insertBefore(new_div, attr.next_element);
-		else if (attr.adjacent_element) parent_element.insertAdjacentElement(attr.adjacent_element_position || "afterend", new_div);
-		else parent_element.appendChild(new_div);
+		else if (attr.adjacent_element) {
+			// noinspection JSUnresolvedVariable
+			parent_element.insertAdjacentElement(attr.adjacent_element_position || "afterend", new_div);
+		} else parent_element.appendChild(new_div);
 
 		return new_div;
 
@@ -2083,6 +1951,7 @@ function isFlying() {
 				}
 			}
 
+			// noinspection JSUnresolvedVariable
 			if (userdata && userdata.travel && userdata.travel.time_left > 0) {
 				resolve(true);
 				return clearInterval(checker);
@@ -2249,10 +2118,6 @@ function isOverflownX(element) {
 	return element.scrollWidth > element.clientWidth;
 }
 
-function isOverflownY(element) {
-	return element.scrollHeight > element.clientHeight;
-}
-
 function capitalize(text, everyWord = false) {
 	if (!everyWord) return text[0].toUpperCase() + text.slice(1);
 
@@ -2268,28 +2133,10 @@ function lastInList(item, list) {
 	return list[list.length - 1] === item;
 }
 
-function toSeconds(time) {
-	time = time.toLowerCase();
-	let seconds = 0;
-
-	if (time.includes("h")) {
-		seconds += parseInt(time.split("h")[0].trim()) * 3600;
-		time = time.split("h")[1];
-	}
-	if (time.includes("m")) {
-		seconds += parseInt(time.split("m")[0].trim()) * 60;
-		time = time.split("m")[1];
-	}
-	if (time.includes("s")) {
-		seconds += parseInt(time.split("s")[0].trim());
-	}
-
-	return seconds;
-}
-
 function numberWithCommas(x, shorten = true, formatter) {
 	if (shorten) {
 		let words;
+		// noinspection JSIncompatibleTypesComparison
 		if (shorten === true || shorten === 1) {
 			words = {
 				thousand: "k",
@@ -2387,16 +2234,27 @@ function setBadge(text, attributes = {}) {
 	const badge = types[text];
 
 	if (!badge) {
+		// noinspection JSUnresolvedVariable,JSUnresolvedFunction
 		chrome.browserAction.setBadgeText({ text: text || "" });
-		if (attributes.color) chrome.browserAction.setBadgeBackgroundColor({ color: attributes.color });
+
+		if (attributes.color)
+			// noinspection JSUnresolvedVariable,JSUnresolvedFunction
+			chrome.browserAction.setBadgeBackgroundColor({ color: attributes.color });
 	} else {
-		if (badge.text) chrome.browserAction.setBadgeText({ text: (typeof badge.text === "function" ? badge.text() : badge.text) || "" });
-		if (badge.color) chrome.browserAction.setBadgeBackgroundColor({ color: badge.color });
+		if (badge.text)
+			// noinspection JSUnresolvedVariable,JSUnresolvedFunction
+			chrome.browserAction.setBadgeText({ text: (typeof badge.text === "function" ? badge.text() : badge.text) || "" });
+		if (badge.color)
+			// noinspection JSUnresolvedVariable,JSUnresolvedFunction
+			chrome.browserAction.setBadgeBackgroundColor({ color: badge.color });
 	}
 }
 
 function getBadgeText() {
-	return new Promise((resolve) => chrome.browserAction.getBadgeText({}, (text) => resolve(text)));
+	return new Promise((resolve) => {
+		// noinspection JSUnresolvedVariable,JSUnresolvedFunction
+		chrome.browserAction.getBadgeText({}, (text) => resolve(text));
+	});
 }
 
 function secondsToHours(x) {
@@ -2538,7 +2396,7 @@ function formatTime([hours, minutes, seconds], formatting) {
 		case "eu":
 			return seconds ? `${hours}:${minutes}:${seconds}` : `${hours}:${minutes}`;
 		default:
-			return formatting([day, month, year], "eu");
+			return formatTime([hours, minutes, seconds], "eu");
 	}
 }
 
@@ -2859,15 +2717,16 @@ function sortSections(parent, page) {
 
 const notificationPlayer = new Audio();
 notificationPlayer.autoplay = false;
+// noinspection JSValidateTypes
 notificationPlayer.preload = true;
 
 let notificationSound = null;
 
 function getNotificationSound(id) {
 	return new Promise((resolve) => {
-		if (id == -1) {
+		if (id === -1) {
 			resolve(-1);
-		} else if (id == 0) {
+		} else if (id === 0) {
 			resolve(0);
 		} else if (!Number.isNaN(Number.parseInt(id))) {
 			resolve(`audio/notification${id}.wav`);
@@ -2888,10 +2747,12 @@ function notifyUser(title, message, url) {
 			message,
 		};
 
-		if (notificationSound != settings.notifications_sound) {
+		if (notificationSound !== settings.notifications_sound) {
 			//avoid reloading sounds
 			let sound = await getNotificationSound(settings.notifications_sound);
+			// noinspection JSValidateTypes
 			if (sound && !Number.isInteger(sound)) {
+				// noinspection JSValidateTypes
 				notificationPlayer.src = sound;
 			}
 
@@ -2900,13 +2761,13 @@ function notifyUser(title, message, url) {
 
 		notificationPlayer.volume = settings.notifications_volume;
 
-		if ((notificationSound == -1 || notificationSound != 0) && hasSilentSupport()) notificationOptions.silent = true;
+		if ((notificationSound === -1 || notificationSound !== 0) && hasSilentSupport()) notificationOptions.silent = true;
 
 		chrome.notifications.create(notificationOptions, function (id) {
 			notificationLinkRelations[id] = url;
 			console.log("   Notified!", notificationOptions);
 
-			if (notificationSound != -1 && notificationSound != 0) notificationPlayer.play();
+			if (notificationSound !== -1 && notificationSound !== 0) notificationPlayer.play();
 		});
 
 		if (settings.notifications_tts) {
@@ -3005,6 +2866,7 @@ function calculateEstimateBattleStats(rank, level, totalCrimes, networth) {
 function injectXHR() {
 	if (injectedXHR) return;
 
+	// noinspection JSUnresolvedVariable,JSUnresolvedFunction
 	doc.find("head").appendChild(
 		doc.new({
 			type: "script",
@@ -3023,6 +2885,7 @@ function addXHRListener(callback) {
 function injectFetch() {
 	if (injectedFetch) return;
 
+	// noinspection JSUnresolvedVariable,JSUnresolvedFunction
 	doc.find("head").appendChild(
 		doc.new({
 			type: "script",
@@ -3045,6 +2908,7 @@ function sleep(millis) {
 function handleTornProfileData(data) {
 	let response = {};
 
+	// noinspection JSUnresolvedVariable
 	const rankSpl = data.rank.split(" ");
 	let rank = rankSpl[0];
 	if (rankSpl[1][0] === rankSpl[1][0].toLowerCase()) rank += " " + rankSpl[1];
@@ -3325,6 +3189,7 @@ function fetchApi_v2(
 						}
 					} else {
 						try {
+							// noinspection JSCheckFunctionSignatures
 							if (ogLocation === "torn" && isNaN(await getBadgeText())) {
 								setBadge("");
 							}
@@ -3421,6 +3286,7 @@ function fetchApi_v2(
 // Uses fetchApi_v2
 function fetchRelay(location, options) {
 	return new Promise((resolve, reject) => {
+		// noinspection JSUnresolvedVariable,JSUnresolvedFunction
 		chrome.runtime.sendMessage({ action: "fetch-relay", location: location, options: options }, (response) => {
 			if (response.error) return reject(response);
 			return resolve(response);

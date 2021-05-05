@@ -22,8 +22,7 @@
 	width: 40%;
 	margin-top: 7px;
 	margin-left: 30%;
-	padding: 2px;
-	padding-left: 5px;
+	padding: 2px 2px 2px 5px;
 }
 
 #tt-vault-container .content .split .divider {
@@ -36,8 +35,7 @@
 #tt-vault-container .content .save-div {
 	width: 90px;
 	height: 25px;
-	margin: auto;
-	margin-top: 5px;
+	margin: 5px auto auto;
 	text-align: center;
 }
 
