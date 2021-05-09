@@ -84,8 +84,6 @@ requireDatabase().then(() => {
 		if (settings.pages.global.show_settings_areas_link && !mobile) ttSettingsLink();
 
 		if (settings.pages.global.npc_loot_info && !mobile) showNpcLoot();
-
-		upkeepMoreThan();
 	});
 
 	chatsLoaded().then(() => {
@@ -366,19 +364,6 @@ function aliasUsersChat(message = "") {
 				let messageUserId = profileA.href.split("=")[1];
 				profileA.innerText = users_alias[messageUserId] + ": ";
 			});
-		}
-	}
-}
-
-function upkeepMoreThan() {
-	if (-networth.current.value.unpaidfees >= settings.pages.global.upkeep_more_than) {
-		doc.find("#sidebarroot #nav-properties").classList.add("tt-upkeep");
-		if (isDarkMode()) {
-			doc.find("#sidebarroot #nav-properties svg").setAttribute("fill", "url(#sidebar_svg_gradient_regular_green_mobile)");
-		} else if (!isDarkMode() && mobile) {
-			doc.find("#sidebarroot #nav-properties svg").setAttribute("fill", "url(#sidebar_svg_gradient_regular_green_mobile)");
-		} else {
-			doc.find("#sidebarroot #nav-properties svg").setAttribute("fill", "url(#sidebar_svg_gradient_regular_desktop_green)");
 		}
 	}
 }
