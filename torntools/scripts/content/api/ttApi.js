@@ -72,12 +72,6 @@ requireDatabase(false).then(() => {
 			type_pretty.checked = true;
 		}
 	}
-
-	if (settings.pages.api.autoDemo) {
-		setTimeout(() => {
-			doc.find(".demoLink").click();
-		}, 75);
-	}
 });
 
 function responseLoaded(response_div, responses_before) {
