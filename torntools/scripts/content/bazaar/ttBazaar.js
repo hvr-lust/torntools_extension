@@ -5,29 +5,6 @@ requireDatabase().then(() => {
 		if (visiting()) {
 			console.log("visiting");
 
-			// Bazaar worth
-			if (settings.pages.bazaar.worth) {
-				let bazaar_user_id = getSearchParameters().get("userId");
-				fetchApi_v2("torn", { section: "user", objectid: bazaar_user_id, selections: "bazaar" })
-					.then((result) => {
-						console.log(result);
-						let total = 0;
-
-						for (let item in result.bazaar) {
-							total += result.bazaar[item].market_price * result.bazaar[item].quantity;
-						}
-
-						let div = doc.new({ type: "div", class: "tt-bazaar-text", text: `This bazaar is worth ` });
-						let span = doc.new({ type: "span", class: "tt-money", text: `$${numberWithCommas(total, false)}` });
-
-						div.appendChild(span);
-						doc.find(".info-msg-cont .msg").appendChild(div);
-					})
-					.catch((err) => {
-						console.log("ERROR", err);
-					});
-			}
-
 			// Highlight item
 			let params = getSearchParameters();
 			if (params.has("tt_itemid") && !mobile) {
