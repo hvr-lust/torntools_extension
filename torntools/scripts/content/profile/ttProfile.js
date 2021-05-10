@@ -403,33 +403,16 @@ function displayAlly(user_faction, allies) {
 	if (profile_faction === "") return;
 
 	if (user_faction === profile_faction) {
-		showWarning("user");
 		disableAllyAttack();
 		return;
 	}
 
 	for (let ally of allies) {
 		if (ally.trim() === profile_faction) {
-			showWarning("ally");
 			disableAllyAttack();
 			return;
 		}
 	}
-}
-
-function showWarning(type) {
-	let text;
-	if (type === "user") text = "This user is in your faction!";
-	else if (type === "ally") text = "This user is an ally!";
-
-	doc.find(".profile-left-wrapper .title-black").appendChild(
-		doc.new({
-			type: "span",
-			class: "tt-title-message",
-			text,
-			attributes: { color: "warning" },
-		})
-	);
 }
 
 function displayTargetInfo(targets) {
