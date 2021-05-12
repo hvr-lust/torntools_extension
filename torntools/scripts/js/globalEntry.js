@@ -23,24 +23,8 @@ function mobileChecker() {
 }
 
 ttStorage.get(["settings"], async ([settings]) => {
-	// Align left
-	if (settings.pages.global.align_left) document.documentElement.classList.add("tt-align-left");
-
-	if (getSearchParameters().has("popped")) document.documentElement.classList.add("tt-popout");
-
-	// Hide Doctorn
-	if (
-		settings.force_tt &&
-		["home", "city", "travelagency", "war", "items", "crimes", "gym", "bounties", "profile", "faction", "jail"].includes(getCurrentPage())
-	) {
-		document.documentElement.style.setProperty("--torntools-hide-doctorn", "none");
-	}
-
 	// Hide chats
 	document.documentElement.style.setProperty(`--torntools-hide-chat`, settings.pages.global.hide_chat ? "none" : "block");
-
-	// Clean Flight page
-	document.documentElement.style.setProperty("--torntools-clean-flight-display", settings.clean_flight ? "none" : "block");
 
 	// Mobile
 	mobile = await mobileChecker();
