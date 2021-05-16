@@ -53,7 +53,6 @@ function massMessages(theme) {
 			list.push(user);
 		}
 
-		console.log("LIST", list);
 		ttStorage.get("mass_messages", (mass_messages) => {
 			mass_messages.list = [...mass_messages.list, ...list];
 			ttStorage.set({ mass_messages });
@@ -104,37 +103,8 @@ function addFilterToTable(list, title) {
     `;
 
 	// Initializing
-	// let time_start = filters.user_list.time[0] || 0;
-	// let time_end = filters.user_list.time[1] || 100;
 	let level_start = filters.user_list.level[0] || 0;
 	let level_end = filters.user_list.level[1] || 100;
-
-	// for(let faction of filters.preset_data.factions.data){
-	//     let option = doc.new({type: "option", value: faction, text: faction});
-	//     if(faction == filters.preset_data.factions.default) option.selected = true;
-
-	//     filter_container.find("#tt-faction-filter").appendChild(option);
-	// }
-	// let divider_option = doc.new({type: "option", value: "----------", text: "----------", attributes: {disabled: true}});
-	// filter_container.find("#tt-faction-filter").appendChild(divider_option);
-
-	// Time slider
-	// let time_slider = filter_container.find('#tt-time-filter');
-	// noUiSlider.create(time_slider, {
-	//     start: [time_start, time_end],
-	//     step: 1,
-	//     connect: true,
-	//     range: {
-	//         'min': 0,
-	//         'max': 100
-	//     }
-	// });
-
-	// let time_slider_info = time_slider.nextElementSibling;
-	// time_slider.noUiSlider.on('update', function (values) {
-	//     values = values.map(x => (time_until(parseFloat(x)*60*60*1000, {max_unit: "h", hide_nulls: true})));
-	//     time_slider_info.innerHTML = `Time: ${values.join(' - ')}`;
-	// });
 
 	// Special
 	for (let key in filters.user_list.special) {
@@ -195,11 +165,8 @@ function addFilterToTable(list, title) {
 	// Page changing
 	doc.addEventListener("click", (event) => {
 		if (event.target.classList && !event.target.classList.contains("gallery-wrapper") && hasParent(event.target, { class: "gallery-wrapper" })) {
-			console.log("click");
 			setTimeout(() => {
 				requirePlayerList(".user-info-list-wrap").then(() => {
-					console.log("loaded");
-					// populateFactions();
 					applyFilters();
 				});
 			}, 300);
@@ -210,18 +177,11 @@ function addFilterToTable(list, title) {
 	for (let state of filters.user_list.activity) {
 		doc.find(`#activity-filter input[value='${state}']`).checked = true;
 	}
-	// if(filters.user_list.faction.default){
-	//     doc.find(`#faction-filter option[value='${filters.user_list.faction}']`).selected = true;
-	// }
-
-	// populateFactions();
 	applyFilters();
 
 	function applyFilters() {
 		let activity = [];
 		let special = {};
-		// let faction = ``;
-		// let time = []
 		let level = [];
 
 		// Activity
@@ -243,19 +203,9 @@ function addFilterToTable(list, title) {
 				special[key] = "both";
 			}
 		}
-		// Faction
-		// faction = doc.find("#faction-filter select option:checked").value;
-		// Time
-		// time.push(parseInt(doc.find("#time-filter .noUi-handle-lower").getAttribute("aria-valuenow")));
-		// time.push(parseInt(doc.find("#time-filter .noUi-handle-upper").getAttribute("aria-valuenow")));
-		// Level
 		level.push(parseInt(doc.find("#level-filter .noUi-handle-lower").getAttribute("aria-valuenow")));
 		level.push(parseInt(doc.find("#level-filter .noUi-handle-upper").getAttribute("aria-valuenow")));
 
-		// console.log("Activity", activity);
-		// console.log("Faction", faction);
-		// console.log("Time", time);
-		// console.log("Level", level);
 
 		// Filtering
 		for (let li of list.findAll(":scope > li")) {
@@ -270,13 +220,6 @@ function addFilterToTable(list, title) {
 				continue;
 			}
 
-			// Time
-			// let player_time = toSeconds(li.find(".time").innerText.trim().replace("Time", "").replace("TIME", "").replace(":", "").replace("left:", "").trim())/60/60;
-			// if(!(time[0] <= player_time && player_time <= time[1])){
-			//     li.classList.add("filter-hidden");
-			//     continue;
-			// }
-
 			// Activity
 			let matches_one_activity = activity.length === 0;
 			for (let state of activity) {
@@ -290,7 +233,6 @@ function addFilterToTable(list, title) {
 
 			// Special
 			for (let key in special) {
-				console.log(key, special[key]);
 				if (special[key] === "both") continue;
 
 				if (special[key] === "yes") {
